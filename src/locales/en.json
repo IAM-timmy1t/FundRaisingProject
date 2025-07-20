@@ -1,0 +1,88 @@
+{
+  "app": {
+    "name": "Blessed-Horizon",
+    "title": "Blessed-Horizon - Faith-Based Transparent Crowdfunding",
+    "description": "Join our faith-based crowdfunding platform that ensures transparency and accountability through trust scoring, escrow wallets, and mandatory progress updates.",
+    "watermark": "Blessed-Horizon"
+  },
+  "header": {
+    "login": "Login",
+    "signUp": "Sign Up",
+    "loginForMessages": "Please log in to see messages",
+    "loginForMessagesDesc": "You need an account to view your messages."
+  },
+  "home": {
+    "title": "Stories of",
+    "titleHighlight": "Hope",
+    "subtitle": "Connect with a global community that cares. Share your story, seek support, and help others overcome financial challenges together.",
+    "shareStory": "Share Your Story",
+    "joinToShare": "Join to Share Your Story",
+    "searchPlaceholder": "Search stories, names, or locations...",
+    "noStoriesTitle": "No Stories Yet",
+    "noStoriesDesc": "Be the first to share a story and inspire our community!",
+    "noMatch": "No stories found matching your search criteria."
+  },
+  "categories": {
+    "all": "All Categories",
+    "medical": "Medical",
+    "education": "Education",
+    "housing": "Housing",
+    "emergency": "Emergency",
+    "business": "Business"
+  },
+  "story": {
+    "urgent": "Urgent",
+    "raised": "Raised",
+    "goal": "Goal",
+    "supportersCount": "{{count}} supporter",
+    "supportersCount_plural": "{{count}} supporters",
+    "funded": "{{progress}}% funded",
+    "support": "Support This Story",
+    "loginRequiredTitle": "Please log in first!",
+    "loginRequiredDesc": "You need an account to share a story.",
+    "shareSuccessTitle": "Your story has been shared! 💙",
+    "shareSuccessDesc": "Your story is now live and people can start supporting you."
+  },
+  "payment": {
+    "helmetTitle": "Donate to {{storyTitle}} | Blessed-Horizon",
+    "helmetDesc": "Support {{storyName}} by making a secure donation.",
+    "backToStories": "Back to Stories",
+    "title": "Secure Donation",
+    "supporting": "You are supporting \"{{storyTitle}}\"",
+    "progressTitle": "Campaign Progress",
+    "formTitle": "Enter Your Donation Details",
+    "amountLabel": "Donation Amount ({{currency}})",
+    "exchangeRate": "1 USD ≈ {{rate}} {{code}}",
+    "cardName": "Name on Card",
+    "cardNumber": "Card Number",
+    "expiry": "MM / YY",
+    "cvc": "CVC",
+    "donateButton": "Donate {{amount}}",
+    "invalidAmountTitle": "Invalid Amount",
+    "invalidAmountDesc": "Please enter a valid donation amount.",
+    "incompleteFormTitle": "Incomplete Form",
+    "incompleteFormDesc": "Please fill in all payment details."
+  },
+  "donation": {
+    "successTitle": "Thank you for your donation! 🙏",
+    "successDesc": "Your donation will make a real difference in someone's life."
+  },
+  "auth": {
+    "loginSuccessTitle": "Welcome back, {{name}}!",
+    "loginSuccessDesc": "You have successfully logged in.",
+    "loginFailTitle": "Login Failed",
+    "loginFailDesc": "Invalid email or password. Please try again.",
+    "accountExistsTitle": "Account Exists",
+    "accountExistsDesc": "An account with this email already exists. Please log in.",
+    "welcomeTitle": "Welcome to Blessed-Horizon! 🎉",
+    "welcomeDesc": "Your account has been created successfully.",
+    "logoutTitle": "You've been logged out.",
+    "logoutDesc": "We hope to see you again soon!"
+  },
+  "community": {
+    "loginRequiredTitle": "Please log in first!",
+    "loginRequiredDesc": "You need an account to post.",
+    "postSuccessTitle": "Message Posted! 💬",
+    "postSuccessDesc": "Your message is now live in the community hub."
+  }
+}

@@ -1,0 +1,95 @@
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { SmtpClient } from 'https://deno.land/x/smtp@v0.7.0/mod.ts';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  try {
+    const { to, subject, html, text } = await req.json();
+
+    // Validate input
+    if (!to || !subject || (!html && !text)) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required fields' }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    // Get email configuration from environment
+    const SMTP_HOST = Deno.env.get('SMTP_HOST') || 'smtp.gmail.com';
+    const SMTP_PORT = parseInt(Deno.env.get('SMTP_PORT') || '587');
+    const SMTP_USER = Deno.env.get('SMTP_USER');
+    const SMTP_PASS = Deno.env.get('SMTP_PASS');
+    const FROM_EMAIL = Deno.env.get('FROM_EMAIL') || SMTP_USER;
+    const FROM_NAME = Deno.env.get('FROM_NAME') || 'FundRaising Platform';
+
+    if (!SMTP_USER || !SMTP_PASS) {
+      console.error('SMTP credentials not configured');
+      return new Response(
+        JSON.stringify({ error: 'Email service not configured' }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    // Create SMTP client
+    const client = new SmtpClient();
+
+    // Connect to SMTP server
+    await client.connectTLS({
+      hostname: SMTP_HOST,
+      port: SMTP_PORT,
+      username: SMTP_USER,
+      password: SMTP_PASS,
+    });
+
+    // Prepare email content
+    const emailContent = html || text;
+    const contentType = html ? 'text/html' : 'text/plain';
+
+    // Send email
+    await client.send({
+      from: `${FROM_NAME} <${FROM_EMAIL}>`,
+      to: to,
+      subject: subject,
+      content: emailContent,
+      headers: {
+        'Content-Type': contentType,
+        'X-Mailer': 'FundRaising Platform Notification Service',
+      },
+    });
+
+    // Close connection
+    await client.close();
+
+    return new Response(
+      JSON.stringify({ success: true, message: 'Email sent successfully' }),
+      { 
+        status: 200, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
+    );
+
+  } catch (error) {
+    console.error('Email sending error:', error);
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
+    );
+  }
+});

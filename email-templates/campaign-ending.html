@@ -1,0 +1,65 @@
+<h1 style="color: #dc2626; font-size: 28px; margin: 0 0 20px;">⏰ Campaign Ending Soon!</h1>
+
+<p style="font-size: 16px; line-height: 24px; margin: 0 0 20px;">
+    {{#if is_donor}}
+    The campaign you supported is ending soon. This is your last chance to increase your donation or share it with others!
+    {{else}}
+    There's still time to support <strong>{{campaign_title}}</strong> before it ends!
+    {{/if}}
+</p>
+
+<div style="background-color: #fef2f2; border: 2px solid #fca5a5; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+    <h2 style="color: #dc2626; font-size: 24px; margin: 0 0 10px;">{{time_left}}</h2>
+    <p style="color: #7f1d1d; font-size: 16px; margin: 0;">Time Remaining</p>
+</div>
+
+<div style="background-color: #f7fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h3 style="color: #2d3748; font-size: 18px; margin: 0 0 15px;">Campaign Progress</h3>
+    
+    <div style="background-color: #e2e8f0; height: 30px; border-radius: 15px; overflow: hidden; margin: 0 0 15px; position: relative;">
+        <div style="background-color: {{#if is_goal_reached}}#10b981{{else}}#3b82f6{{/if}}; height: 100%; width: {{progress_percentage}}%;"></div>
+        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #1a202c; font-weight: bold;">{{progress_percentage}}%</span>
+    </div>
+    
+    <div style="display: flex; justify-content: space-between; margin: 0 0 15px;">
+        <div>
+            <p style="margin: 0; color: #718096; font-size: 14px;">Raised</p>
+            <p style="margin: 0; color: #2d3748; font-size: 20px; font-weight: bold;">{{formatCurrency current_amount currency}}</p>
+        </div>
+        <div style="text-align: right;">
+            <p style="margin: 0; color: #718096; font-size: 14px;">Goal</p>
+            <p style="margin: 0; color: #2d3748; font-size: 20px; font-weight: bold;">{{formatCurrency goal_amount currency}}</p>
+        </div>
+    </div>
+    
+    {{#unless is_goal_reached}}
+    <p style="color: #dc2626; font-weight: bold; margin: 0;">
+        Still needs {{formatCurrency amount_needed currency}} to reach the goal!
+    </p>
+    {{/unless}}
+</div>
+
+{{#if recent_update}}
+<div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h3 style="color: #2d3748; font-size: 16px; margin: 0 0 10px;">Latest Update</h3>
+    <p style="color: #4a5568; margin: 0;">"{{recent_update}}"</p>
+    <p style="color: #718096; font-size: 14px; margin: 10px 0 0;">- Posted {{recent_update_date}}</p>
+</div>
+{{/if}}
+
+<div style="text-align: center; margin: 30px 0;">
+    {{#if is_donor}}
+    <a href="{{app_url}}/campaigns/{{campaign_id}}" class="button" style="margin-right: 10px;">View Campaign</a>
+    <a href="{{app_url}}/campaigns/{{campaign_id}}/donate" class="button" style="background-color: #10b981;">Donate Again</a>
+    {{else}}
+    <a href="{{app_url}}/campaigns/{{campaign_id}}/donate" class="button">Donate Now</a>
+    {{/if}}
+</div>
+
+<div style="background-color: #f7fafc; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
+    <p style="color: #4a5568; margin: 0 0 10px;">Help reach the goal by sharing:</p>
+    <div>
+        <a href="{{share_facebook_url}}" style="display: inline-block; margin: 0 5px; padding: 8px 16px; background-color: #1877f2; color: white; text-decoration: none; border-radius: 4px; font-size: 14px;">Share on Facebook</a>
+        <a href="{{share_twitter_url}}" style="display: inline-block; margin: 0 5px; padding: 8px 16px; background-color: #1da1f2; color: white; text-decoration: none; border-radius: 4px; font-size: 14px;">Share on Twitter</a>
+    </div>
+</div>

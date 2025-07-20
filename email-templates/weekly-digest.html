@@ -1,0 +1,84 @@
+<h1 style="color: #1a202c; font-size: 28px; margin: 0 0 20px;">Your Weekly Blessed Horizon Summary</h1>
+
+<p style="font-size: 16px; line-height: 24px; margin: 0 0 20px;">
+    Hello {{user_name}}, here's your weekly overview for {{week_start}} - {{week_end}}:
+</p>
+
+<div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); padding: 30px; border-radius: 8px; margin: 20px 0; text-align: center;">
+    <h2 style="color: #1e3a8a; font-size: 24px; margin: 0 0 20px;">Weekly Highlights</h2>
+    
+    <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+        <div style="background-color: white; padding: 20px; border-radius: 8px; margin: 10px; min-width: 150px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="color: #10b981; font-size: 32px; margin: 0;">{{total_donations}}</h3>
+            <p style="color: #4a5568; margin: 5px 0 0;">Donations Received</p>
+        </div>
+        <div style="background-color: white; padding: 20px; border-radius: 8px; margin: 10px; min-width: 150px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="color: #3b82f6; font-size: 32px; margin: 0;">{{formatCurrency total_amount currency}}</h3>
+            <p style="color: #4a5568; margin: 5px 0 0;">Total Raised</p>
+        </div>
+        <div style="background-color: white; padding: 20px; border-radius: 8px; margin: 10px; min-width: 150px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="color: #f59e0b; font-size: 32px; margin: 0;">{{total_updates}}</h3>
+            <p style="color: #4a5568; margin: 5px 0 0;">Campaign Updates</p>
+        </div>
+    </div>
+</div>
+
+{{#if top_campaigns}}
+<div style="background-color: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h2 style="color: #166534; font-size: 20px; margin: 0 0 15px;">🏆 Top Performing Campaigns</h2>
+    {{#each top_campaigns}}
+    <div style="background-color: white; padding: 15px; border-radius: 6px; margin: 0 0 10px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <p style="margin: 0 0 5px;"><strong>{{this.title}}</strong></p>
+            <p style="margin: 0; color: #4a5568; font-size: 14px;">{{formatCurrency this.amount_raised this.currency}} raised ({{this.progress_percentage}}% of goal)</p>
+        </div>
+        <a href="{{../app_url}}/campaigns/{{this.campaign_id}}" style="color: #3b82f6; text-decoration: none; white-space: nowrap;">View →</a>
+    </div>
+    {{/each}}
+</div>
+{{/if}}
+
+{{#if donor_stories}}
+<div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h2 style="color: #2d3748; font-size: 20px; margin: 0 0 15px;">💬 Donor Stories</h2>
+    {{#each donor_stories}}
+    <div style="background-color: white; padding: 15px; border-radius: 6px; margin: 0 0 10px;">
+        <p style="margin: 0 0 10px; font-style: italic; color: #4a5568;">"{{this.message}}"</p>
+        <p style="margin: 0; font-size: 14px; color: #718096;">- {{this.donor_name}} supporting {{this.campaign_title}}</p>
+    </div>
+    {{/each}}
+</div>
+{{/if}}
+
+{{#if upcoming_endings}}
+<div style="background-color: #fef2f2; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h2 style="color: #991b1b; font-size: 20px; margin: 0 0 15px;">⏰ Campaigns Ending This Week</h2>
+    {{#each upcoming_endings}}
+    <div style="background-color: white; padding: 15px; border-radius: 6px; margin: 0 0 10px; border-left: 4px solid #dc2626;">
+        <p style="margin: 0 0 5px;"><strong>{{this.title}}</strong></p>
+        <p style="margin: 0 0 5px; color: #dc2626;">Ends in {{this.days_remaining}} days</p>
+        <p style="margin: 0; color: #4a5568; font-size: 14px;">{{this.progress_percentage}}% funded - Still needs {{formatCurrency this.amount_needed this.currency}}</p>
+        <a href="{{../app_url}}/campaigns/{{this.campaign_id}}/donate" style="color: #dc2626; font-weight: bold; text-decoration: none;">Donate Now →</a>
+    </div>
+    {{/each}}
+</div>
+{{/if}}
+
+<div style="background-color: #f7fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h2 style="color: #2d3748; font-size: 20px; margin: 0 0 15px;">📈 Platform Statistics</h2>
+    <ul style="list-style: none; padding: 0; margin: 0;">
+        <li style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;">Total Campaigns This Week: <strong>{{platform_stats.new_campaigns}}</strong></li>
+        <li style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;">Total Donations This Week: <strong>{{platform_stats.total_donations}}</strong></li>
+        <li style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;">Total Amount Raised: <strong>{{formatCurrency platform_stats.total_raised currency}}</strong></li>
+        <li style="padding: 8px 0;">Average Trust Score: <strong>{{platform_stats.average_trust_score}}</strong></li>
+    </ul>
+</div>
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="{{app_url}}/dashboard" class="button" style="margin-right: 10px;">Go to Dashboard</a>
+    <a href="{{app_url}}/browse" class="button" style="background-color: #10b981;">Browse Campaigns</a>
+</div>
+
+<p style="font-size: 14px; color: #718096; text-align: center; margin: 20px 0 0;">
+    Thank you for being part of the Blessed Horizon community. Together, we're making a difference through transparent, faith-based giving.
+</p>

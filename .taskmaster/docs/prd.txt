@@ -1,0 +1,178 @@
+# Blessed-Horizon Product Requirements Document
+*Faith-Based Transparent Crowdfunding Platform*
+
+## Executive Summary
+Blessed-Horizon is a revolutionary faith-based crowdfunding platform designed to ensure transparency, accountability, and trust between donors and recipients. The platform leverages Supabase for rapid development, implementing features like trust scoring, escrow wallets, mandatory progress updates, and AI-powered moderation to create a secure and transparent donation ecosystem.
+
+## Project Overview
+**Mission**: Create a transparent, faith-based crowdfunding platform that ensures accountability between donors and recipients through trust scoring, escrow wallets, and mandatory progress updates.
+
+**Core Values**: 
+- Righteous generosity
+- Complete transparency
+- Accountability
+- Global accessibility
+- Faith-based community support
+
+## Current Status Assessment
+The project currently has a basic React/Vite foundation with:
+- ✅ Supabase authentication integration
+- ✅ Basic UI components and routing
+- ✅ User profiles and messaging system
+- ✅ Community features
+- ❌ Needs complete rebranding from "Hostinger Horizons" to "Blessed-Horizon"
+- ❌ Missing crowdfunding features
+- ❌ No trust scoring system
+- ❌ No payment integration
+- ❌ No campaign management
+
+## Technology Stack
+
+### Phase 1-2: Rapid Development with Supabase (Current Focus)
+- **Database**: Supabase PostgreSQL with Row Level Security (RLS)
+- **Authentication**: Supabase Auth (JWT, MFA, social logins)
+- **Real-time**: Supabase Realtime subscriptions
+- **File Storage**: Supabase Storage
+- **Edge Functions**: Supabase Edge Functions (Deno-based)
+- **Frontend**: React with TypeScript, Tailwind CSS
+- **Payment**: Stripe integration
+
+### Phase 3+: Future Migration to Microservices
+- **Backend**: FastAPI (Python)
+- **Database**: PostgreSQL, Redis, ClickHouse
+- **Message Queue**: Apache Kafka
+- **Container**: Docker, Kubernetes
+- **Monitoring**: Prometheus, Grafana
+
+## Core Features
+
+### 1. User Management & Authentication
+- **Registration/Login**: Email/password and social authentication (Google, Apple)
+- **User Profiles**: Display name, country, trust score, verification status
+- **KYC Verification**: Multi-tier verification system
+- **Role-based Access**: Recipients, Donors, Admins
+
+### 2. Campaign Management
+- **Campaign Creation**: 4-step wizard with story, budget, timeline
+- **Campaign Types**: Emergency (short-term) and Community Long-term
+- **Budget Breakdown**: Detailed itemization of funding needs
+- **Anti-Lavish Checking**: AI-powered content moderation
+- **Scripture References**: Optional faith-based references
+
+### 3. Trust Score System
+- **Weighted Scoring Algorithm**:
+  - Update Timeliness: 40%
+  - Spend Proof Accuracy: 30%
+  - Donor Sentiment: 15%
+  - KYC Depth: 10%
+  - Anomaly Score: 5%
+- **Trust Tiers**: NEW → RISING → STEADY → TRUSTED → STAR
+- **Real-time Calculations**: Automatic updates based on behavior
+
+### 4. Payment Processing & Escrow
+- **Stripe Integration**: Secure payment processing
+- **Escrow Wallets**: Funds held until milestones met
+- **3-Click Donor Checkout**: Streamlined donation process
+- **Multiple Payment Methods**: Cards, Apple Pay, Google Pay
+- **Automated Fund Release**: Based on milestones and donor voting
+
+### 5. Update System
+- **Mandatory Updates**: 
+  - Emergency campaigns: Weekly
+  - Long-term campaigns: Monthly
+- **Update Types**: Text, Photo, Video, Receipt
+- **Spend Tracking**: Tagged expenses with proof
+- **Real-time Broadcasting**: Updates pushed to donors
+
+### 6. Moderation & Safety
+- **AI Content Screening**: Detect inappropriate requests
+- **Anti-Lavish Detection**: Flag luxury items
+- **Manual Review Queue**: Admin moderation
+- **Fraud Detection**: Pattern recognition
+
+### 7. Communication
+- **Donor-Recipient Chat**: Direct messaging
+- **Community Forum**: Public discussions
+- **Update Comments**: Donor feedback
+- **Multi-language Support**: i18n integration
+
+### 8. Analytics & Reporting
+- **Campaign Analytics**: Funding progress, donor metrics
+- **Trust Score History**: Performance tracking
+- **Financial Reports**: Donation receipts, tax documents
+- **Impact Metrics**: Success stories, community impact
+
+## User Flows
+
+### Recipient Journey
+1. Register → Verify Identity → Create Campaign
+2. Submit for Moderation → Get Approved → Go Live
+3. Receive Donations → Post Updates → Build Trust
+4. Complete Campaign → Release Funds → Share Impact
+
+### Donor Journey
+1. Browse Campaigns → View Trust Scores → Select Campaign
+2. Review Budget → Donate → Receive Updates
+3. Track Progress → Vote on Releases → See Impact
+
+## Security & Compliance
+- **Data Protection**: GDPR compliance, encryption at rest
+- **Payment Security**: PCI DSS compliance via Stripe
+- **Access Control**: Row Level Security (RLS) policies
+- **Audit Trails**: All financial transactions logged
+- **Two-Factor Authentication**: Enhanced account security
+
+## Performance Requirements
+- **Response Time**: p95 < 250ms
+- **Uptime**: 99.9% availability
+- **Concurrent Users**: Support 10,000+ active users
+- **Database Performance**: Optimized queries with indexes
+- **Real-time Updates**: < 100ms latency
+
+## Success Metrics
+- **Technical Metrics**:
+  - API response time < 250ms
+  - Zero critical security incidents
+  - 99.9% uptime
+- **Business Metrics**:
+  - 50,000+ registered users (Year 1)
+  - £5M GMV (Year 1)
+  - 85% campaign funding rate
+  - 70% donor retention
+- **Impact Metrics**:
+  - 1,000+ funded campaigns
+  - Average trust score > 75
+  - 85% update compliance rate
+
+## Implementation Phases
+
+### Phase 1: Foundation (Weeks 1-6)
+- Supabase setup and database schema
+- Authentication and user profiles
+- Basic campaign CRUD operations
+
+### Phase 2: MVP Features (Weeks 7-16)
+- Campaign creation wizard
+- Payment integration
+- Update system
+- Trust scoring
+- Basic moderation
+
+### Phase 3: Alpha Launch (Weeks 17-26)
+- Enhanced features
+- Performance optimization
+- Security hardening
+- Beta testing
+
+### Phase 4: Production Launch (Weeks 27-34)
+- Public launch preparation
+- Marketing campaign
+- Support infrastructure
+
+## Future Enhancements
+- Mobile applications (React Native)
+- Blockchain transparency ledger
+- Multi-currency support
+- Advanced ML fraud detection
+- Video testimonials
+- Collective funding pools

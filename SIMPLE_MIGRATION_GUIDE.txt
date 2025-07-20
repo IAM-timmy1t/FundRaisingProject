@@ -1,0 +1,48 @@
+# SUPABASE SQL EDITOR - MIGRATION GUIDE
+
+## 🎯 Simple Steps:
+
+### Step 1: Click "New SQL Snippet"
+You should see a green button in the center. Click it.
+
+### Step 2: A new SQL editor will open
+You'll see an empty text area where you can type or paste SQL code.
+
+### Step 3: Copy the migration SQL
+1. Open this file in Notepad or any text editor:
+   `Z:\.CodingProjects\GitHub_Repos\FundRaisingProject\supabase\combined-migrations.sql`
+
+2. Select ALL the text (Ctrl+A)
+3. Copy it (Ctrl+C)
+
+### Step 4: Paste in Supabase
+1. Go back to the Supabase SQL Editor
+2. Click in the empty text area
+3. Paste the SQL (Ctrl+V)
+
+### Step 5: Run the migration
+1. Click the "Run" button at the bottom
+   OR
+   Press Ctrl+Enter
+
+### Step 6: Wait for completion
+- You'll see messages appear below
+- Look for green checkmarks or "Success" messages
+- If you see red errors, let me know
+
+## 🚨 Important Notes:
+- The migration might take 30-60 seconds to complete
+- If you see errors about "type already exists", that's OK - it means some parts were already created
+- After running, you should see many "CREATE TABLE" success messages
+
+## 📸 Visual Guide:
+1. Click green "New SQL Snippet" button
+2. Empty editor appears
+3. Paste the SQL code
+4. Click "Run" or press Ctrl+Enter
+5. See success messages below
+
+## ❓ If Something Goes Wrong:
+- Take a screenshot of any errors
+- We can run the migration in smaller parts
+- The file `combined-migrations.sql` has everything in one place

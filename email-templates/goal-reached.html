@@ -1,0 +1,51 @@
+<div style="text-align: center; margin: 0 0 30px;">
+    <h1 style="color: #059669; font-size: 32px; margin: 0;">🎉 Goal Reached! 🎉</h1>
+</div>
+
+<p style="font-size: 18px; line-height: 28px; margin: 0 0 20px; text-align: center;">
+    Congratulations! <strong>{{campaign_title}}</strong> has reached its funding goal!
+</p>
+
+<div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 30px; border-radius: 8px; margin: 20px 0; text-align: center;">
+    <h2 style="color: #166534; font-size: 36px; margin: 0 0 10px;">{{formatCurrency goal_amount currency}}</h2>
+    <p style="color: #166534; font-size: 18px; margin: 0;">Goal Achieved!</p>
+</div>
+
+<div style="background-color: #f7fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h3 style="color: #2d3748; font-size: 18px; margin: 0 0 15px;">Campaign Summary</h3>
+    <ul style="list-style: none; padding: 0; margin: 0;">
+        <li style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;"><strong>Total Raised:</strong> {{formatCurrency current_amount currency}}</li>
+        <li style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;"><strong>Number of Donors:</strong> {{donor_count}}</li>
+        <li style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;"><strong>Average Donation:</strong> {{formatCurrency average_donation currency}}</li>
+        <li style="padding: 8px 0;"><strong>Days to Goal:</strong> {{days_to_goal}}</li>
+    </ul>
+</div>
+
+{{#if is_donor}}
+<div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; margin: 20px 0;">
+    <h3 style="color: #92400e; font-size: 16px; margin: 0 0 10px;">Thank You for Your Support!</h3>
+    <p style="color: #92400e; margin: 0;">
+        Your contribution of <strong>{{formatCurrency user_donation_amount currency}}</strong> helped make this possible. The recipient will continue to post updates about how the funds are being used.
+    </p>
+</div>
+{{/if}}
+
+{{#if is_recipient}}
+<div style="background-color: #dbeafe; border-left: 4px solid #3b82f6; padding: 20px; margin: 20px 0;">
+    <h3 style="color: #1e3a8a; font-size: 16px; margin: 0 0 10px;">What's Next?</h3>
+    <ul style="color: #1e3a8a; margin: 0; padding-left: 20px;">
+        <li>Thank your donors with a special update</li>
+        <li>Begin using the funds as outlined in your campaign</li>
+        <li>Post regular updates showing your progress</li>
+        <li>Upload receipts to maintain transparency</li>
+    </ul>
+</div>
+{{/if}}
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="{{app_url}}/campaigns/{{campaign_id}}" class="button">View Campaign</a>
+</div>
+
+<p style="font-size: 16px; line-height: 24px; text-align: center; margin: 20px 0 0;">
+    Thank you for being part of this journey. Together, we're making a difference through transparent, faith-based giving.
+</p>

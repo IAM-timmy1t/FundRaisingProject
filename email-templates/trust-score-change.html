@@ -1,0 +1,97 @@
+<h1 style="color: #1a202c; font-size: 28px; margin: 0 0 20px;">Your Trust Score Has Changed</h1>
+
+<p style="font-size: 16px; line-height: 24px; margin: 0 0 20px;">
+    Hello {{user_name}}, we wanted to inform you about a recent change to your trust score on Blessed Horizon.
+</p>
+
+<div style="background-color: {{#if score_increased}}#f0fdf4{{else}}#fef2f2{{/if}}; padding: 30px; border-radius: 8px; margin: 20px 0; text-align: center;">
+    <h2 style="color: {{#if score_increased}}#166534{{else}}#991b1b{{/if}}; font-size: 48px; margin: 0 0 10px;">
+        {{new_score}}
+    </h2>
+    <p style="color: {{#if score_increased}}#166534{{else}}#991b1b{{/if}}; font-size: 18px; margin: 0;">
+        {{#if score_increased}}
+        <span style="font-size: 24px;">↑</span> Increased by {{score_change}} points
+        {{else}}
+        <span style="font-size: 24px;">↓</span> Decreased by {{score_change}} points
+        {{/if}}
+    </p>
+    <p style="color: #4a5568; margin: 10px 0 0;">Previous Score: {{old_score}}</p>
+</div>
+
+<div style="background-color: #f7fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h3 style="color: #2d3748; font-size: 18px; margin: 0 0 15px;">Trust Score Breakdown</h3>
+    
+    <div style="margin: 0 0 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 0 0 10px;">
+            <span style="color: #4a5568;">Update Timeliness (40%)</span>
+            <span style="color: #2d3748; font-weight: bold;">{{metrics.update_timeliness}}/40</span>
+        </div>
+        <div style="background-color: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
+            <div style="background-color: #3b82f6; height: 100%; width: {{metrics.update_timeliness_percentage}}%;"></div>
+        </div>
+    </div>
+    
+    <div style="margin: 0 0 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 0 0 10px;">
+            <span style="color: #4a5568;">Spend Accuracy (30%)</span>
+            <span style="color: #2d3748; font-weight: bold;">{{metrics.spend_accuracy}}/30</span>
+        </div>
+        <div style="background-color: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
+            <div style="background-color: #3b82f6; height: 100%; width: {{metrics.spend_accuracy_percentage}}%;"></div>
+        </div>
+    </div>
+    
+    <div style="margin: 0 0 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 0 0 10px;">
+            <span style="color: #4a5568;">Donor Sentiment (15%)</span>
+            <span style="color: #2d3748; font-weight: bold;">{{metrics.donor_sentiment}}/15</span>
+        </div>
+        <div style="background-color: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
+            <div style="background-color: #3b82f6; height: 100%; width: {{metrics.donor_sentiment_percentage}}%;"></div>
+        </div>
+    </div>
+    
+    <div style="margin: 0 0 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 0 0 10px;">
+            <span style="color: #4a5568;">Identity Verification (10%)</span>
+            <span style="color: #2d3748; font-weight: bold;">{{metrics.identity_verification}}/10</span>
+        </div>
+        <div style="background-color: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
+            <div style="background-color: #3b82f6; height: 100%; width: {{metrics.identity_verification_percentage}}%;"></div>
+        </div>
+    </div>
+</div>
+
+{{#if reasons}}
+<div style="background-color: #f7fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h3 style="color: #2d3748; font-size: 18px; margin: 0 0 15px;">What Affected Your Score</h3>
+    <ul style="color: #4a5568; margin: 0; padding-left: 20px;">
+        {{#each reasons}}
+        <li style="margin: 0 0 8px;">{{this}}</li>
+        {{/each}}
+    </ul>
+</div>
+{{/if}}
+
+{{#if score_increased}}
+<div style="background-color: #f0fdf4; border-left: 4px solid #10b981; padding: 20px; margin: 20px 0;">
+    <h3 style="color: #065f46; font-size: 16px; margin: 0 0 10px;">Great Job!</h3>
+    <p style="color: #065f46; margin: 0;">
+        Your improved trust score shows donors that you're committed to transparency and accountability. Keep up the excellent work!
+    </p>
+</div>
+{{else}}
+<div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; margin: 20px 0;">
+    <h3 style="color: #92400e; font-size: 16px; margin: 0 0 10px;">How to Improve Your Score</h3>
+    <ul style="color: #92400e; margin: 0; padding-left: 20px;">
+        <li style="margin: 0 0 8px;">Post regular updates about your campaign progress</li>
+        <li style="margin: 0 0 8px;">Upload receipts when you spend campaign funds</li>
+        <li style="margin: 0 0 8px;">Respond promptly to donor questions</li>
+        <li style="margin: 0 0 8px;">Complete identity verification if you haven't already</li>
+    </ul>
+</div>
+{{/if}}
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="{{app_url}}/dashboard/trust-score" class="button">View Full Details</a>
+</div>

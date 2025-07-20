@@ -1,0 +1,44 @@
+<h1 style="color: #1a202c; font-size: 28px; margin: 0 0 20px;">New Update from {{campaign_title}}</h1>
+
+<p style="font-size: 16px; line-height: 24px; margin: 0 0 20px;">
+    {{recipient_name}} has posted a new update about their campaign.
+</p>
+
+<div style="background-color: #f7fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h2 style="color: #2d3748; font-size: 20px; margin: 0 0 15px;">{{update_title}}</h2>
+    
+    {{#if update_image}}
+    <img src="{{update_image}}" alt="Update image" style="width: 100%; max-width: 500px; height: auto; border-radius: 8px; margin: 0 0 15px;">
+    {{/if}}
+    
+    <div style="color: #4a5568; font-size: 16px; line-height: 24px;">
+        {{{update_content}}}
+    </div>
+    
+    {{#if spend_amount}}
+    <div style="background-color: #e6fffa; padding: 15px; border-radius: 6px; margin: 15px 0 0;">
+        <p style="margin: 0; color: #234e52;"><strong>Funds Used:</strong> {{formatCurrency spend_amount currency}}</p>
+        {{#if spend_category}}
+        <p style="margin: 5px 0 0; color: #234e52;"><strong>Category:</strong> {{spend_category}}</p>
+        {{/if}}
+    </div>
+    {{/if}}
+</div>
+
+<div style="border-top: 1px solid #e2e8f0; margin: 30px 0; padding: 20px 0 0;">
+    <h3 style="color: #2d3748; font-size: 18px; margin: 0 0 15px;">Campaign Progress</h3>
+    <div style="background-color: #e2e8f0; height: 20px; border-radius: 10px; overflow: hidden; margin: 0 0 10px;">
+        <div style="background-color: #3b82f6; height: 100%; width: {{progress_percentage}}%;"></div>
+    </div>
+    <p style="color: #4a5568; margin: 0;">
+        <strong>{{formatCurrency current_amount currency}}</strong> raised of <strong>{{formatCurrency goal_amount currency}}</strong> goal
+    </p>
+</div>
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="{{app_url}}/campaigns/{{campaign_id}}#update-{{update_id}}" class="button">View Full Update</a>
+</div>
+
+<p style="font-size: 14px; color: #718096; margin: 20px 0 0;">
+    You're receiving this because you donated to this campaign. Thank you for your support!
+</p>

@@ -1,0 +1,818 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Project Rebranding and Setup",
+        "description": "Rebrand the project from 'Hostinger Horizons' to 'Blessed-Horizon' across all files and configurations",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [],
+        "tags": [
+          "setup",
+          "branding"
+        ],
+        "details": "Update all references to 'Hostinger Horizons' in the codebase to 'Blessed-Horizon'. This includes HTML titles, component names, configuration files, and any hardcoded strings.",
+        "subtasks": [],
+        "testStrategy": "Verify all references have been updated by searching the codebase"
+      },
+      {
+        "id": 2,
+        "title": "Supabase Project Configuration",
+        "description": "Set up Supabase project with proper database schema, authentication, and storage buckets",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [],
+        "tags": [
+          "database",
+          "supabase",
+          "setup"
+        ],
+        "details": "Create Supabase project configuration files, set up database migrations, configure authentication providers, and create storage buckets for campaign media",
+        "subtasks": [],
+        "testStrategy": "Test database connections, auth flows, and storage operations"
+      },
+      {
+        "id": 3,
+        "title": "Database Schema Implementation",
+        "description": "Create comprehensive database schema with all required tables for campaigns, donations, trust scores, and updates",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [
+          2
+        ],
+        "tags": [
+          "database",
+          "schema",
+          "supabase"
+        ],
+        "details": "Implement database tables for: user_profiles, campaigns, campaign_updates, donations, trust_score_events, notifications. Include proper indexes and relationships.",
+        "subtasks": [],
+        "testStrategy": "Run migrations and verify all tables are created with correct relationships"
+      },
+      {
+        "id": 4,
+        "title": "Row Level Security (RLS) Policies",
+        "description": "Implement comprehensive RLS policies for all database tables to ensure data security",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [
+          3
+        ],
+        "tags": [
+          "security",
+          "database",
+          "supabase"
+        ],
+        "details": "Create RLS policies for each table ensuring users can only access appropriate data. Public read for campaigns, owner-only updates, etc.",
+        "subtasks": [],
+        "testStrategy": "Test each policy with different user roles to ensure proper access control"
+      },
+      {
+        "id": 5,
+        "title": "Enhanced Authentication System",
+        "description": "Upgrade authentication to support social logins, MFA, and proper user roles",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [
+          2
+        ],
+        "tags": [
+          "auth",
+          "security",
+          "supabase"
+        ],
+        "details": "Implement Google and Apple social authentication, enable MFA, create role-based access control for recipients, donors, and admins",
+        "subtasks": [],
+        "testStrategy": "Test all authentication flows including social login and MFA"
+      },
+      {
+        "id": 6,
+        "title": "User Profile Enhancement",
+        "description": "Extend user profiles to include trust scores, verification status, and crowdfunding-specific fields",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [
+          3,
+          5
+        ],
+        "tags": [
+          "users",
+          "profiles",
+          "database"
+        ],
+        "details": "Add fields for trust_score, trust_tier, verified_status, country_iso, preferred_language, date_of_birth to user profiles",
+        "subtasks": [],
+        "testStrategy": "Create test profiles and verify all fields are properly stored and retrieved"
+      },
+      {
+        "id": 7,
+        "title": "Campaign Model and API",
+        "description": "Create campaign data model and API endpoints for CRUD operations",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [
+          3
+        ],
+        "tags": [
+          "campaigns",
+          "api",
+          "backend"
+        ],
+        "details": "Implement campaign model with fields for title, need_type, goal_amount, currency, deadline, story, budget_breakdown, status",
+        "subtasks": [],
+        "testStrategy": "Test all CRUD operations for campaigns with various data scenarios"
+      },
+      {
+        "id": 8,
+        "title": "Campaign Creation Wizard UI",
+        "description": "Build 4-step campaign creation wizard with validation and preview",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [
+          7
+        ],
+        "tags": [
+          "frontend",
+          "campaigns",
+          "ui"
+        ],
+        "details": "Create multi-step form: 1) Basic Info, 2) Story & Scripture, 3) Budget Breakdown, 4) Review & Submit",
+        "subtasks": [],
+        "testStrategy": "Test wizard flow with various inputs and edge cases"
+      },
+      {
+        "id": 9,
+        "title": "Campaign Listing and Browse Pages",
+        "description": "Create pages to browse and search campaigns with filters",
+        "priority": "medium",
+        "status": "done",
+        "dependencies": [
+          7
+        ],
+        "tags": [
+          "frontend",
+          "campaigns",
+          "ui"
+        ],
+        "details": "Implement campaign grid/list views with filters for need_type, funding status, location. Include search functionality",
+        "subtasks": [],
+        "testStrategy": "Test filtering, sorting, and search functionality"
+      },
+      {
+        "id": 10,
+        "title": "Campaign Detail Page",
+        "description": "Build comprehensive campaign detail page with donation interface",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [
+          7
+        ],
+        "tags": [
+          "frontend",
+          "campaigns",
+          "ui"
+        ],
+        "details": "Display campaign story, budget, progress, updates, trust score. Include donation button and update feed",
+        "subtasks": [],
+        "testStrategy": "Verify all campaign information displays correctly with real-time updates"
+      },
+      {
+        "id": 11,
+        "title": "Stripe Payment Integration",
+        "description": "Integrate Stripe for payment processing with PaymentIntent API",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [],
+        "tags": [
+          "payments",
+          "stripe",
+          "integration"
+        ],
+        "details": "Set up Stripe account, implement PaymentIntent creation, handle webhooks for payment confirmation",
+        "subtasks": [],
+        "testStrategy": "Test payment flows in Stripe test mode"
+      },
+      {
+        "id": 12,
+        "title": "Donation Flow Implementation",
+        "description": "Create seamless 3-click donation process with guest checkout",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [
+          11
+        ],
+        "tags": [
+          "payments",
+          "frontend",
+          "donations"
+        ],
+        "details": "Build donation form with amount selection, payment method input, and confirmation. Support guest donations",
+        "subtasks": [],
+        "testStrategy": "Complete end-to-end donation tests with various amounts and payment methods"
+      },
+      {
+        "id": 13,
+        "title": "Payment Webhook Handler",
+        "description": "Create Supabase Edge Function to handle Stripe webhooks",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [
+          11,
+          2
+        ],
+        "tags": [
+          "payments",
+          "backend",
+          "edge-functions"
+        ],
+        "details": "Handle payment_intent.succeeded events, update donation records, and campaign funding progress",
+        "subtasks": [],
+        "testStrategy": "Test webhook handling with Stripe CLI"
+      },
+      {
+        "id": 14,
+        "title": "Trust Score Calculation Engine",
+        "description": "Implement trust score calculation algorithm with weighted metrics",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [
+          3
+        ],
+        "tags": [
+          "trust-score",
+          "backend",
+          "algorithm"
+        ],
+        "details": "Calculate scores based on: update timeliness (40%), spend accuracy (30%), donor sentiment (15%), KYC (10%), anomalies (5%)",
+        "subtasks": [],
+        "testStrategy": "Test score calculations with various user behavior patterns"
+      },
+      {
+        "id": 15,
+        "title": "Trust Score Edge Function",
+        "description": "Create Supabase Edge Function for real-time trust score updates",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [
+          14,
+          2
+        ],
+        "tags": [
+          "trust-score",
+          "edge-functions",
+          "backend"
+        ],
+        "details": "Implement function to recalculate trust scores on triggers: new update, donation received, time elapsed",
+        "subtasks": [],
+        "testStrategy": "Verify trust scores update correctly on various events"
+      },
+      {
+        "id": 16,
+        "title": "Trust Score UI Components",
+        "description": "Build trust score badge and detailed breakdown components",
+        "priority": "medium",
+        "status": "done",
+        "dependencies": [
+          14
+        ],
+        "tags": [
+          "trust-score",
+          "frontend",
+          "ui"
+        ],
+        "details": "Create visual trust score badge with tier colors, hover tooltip, and detailed metrics modal",
+        "subtasks": [],
+        "testStrategy": "Test UI components with various score levels and tiers"
+      },
+      {
+        "id": 17,
+        "title": "Campaign Update System",
+        "description": "Implement update creation and display system for campaigns",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [
+          7
+        ],
+        "tags": [
+          "updates",
+          "campaigns",
+          "backend"
+        ],
+        "details": "Create update model supporting text, photo, video, and receipt types. Include spend tracking",
+        "subtasks": [],
+        "testStrategy": "Test creating and displaying various update types"
+      },
+      {
+        "id": 18,
+        "title": "Update Creation UI",
+        "description": "Build interface for recipients to post campaign updates",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [
+          17
+        ],
+        "tags": [
+          "updates",
+          "frontend",
+          "ui"
+        ],
+        "details": "Create form with rich text editor, media upload, spend tagging, and receipt attachment",
+        "subtasks": [],
+        "testStrategy": "Test update creation with various content types and media"
+      },
+      {
+        "id": 19,
+        "title": "Real-time Update Broadcasting",
+        "description": "Implement real-time updates using Supabase Realtime",
+        "priority": "medium",
+        "status": "done",
+        "dependencies": [
+          17
+        ],
+        "tags": [
+          "realtime",
+          "updates",
+          "supabase"
+        ],
+        "details": "Set up Realtime subscriptions for campaign updates, broadcast to connected donors",
+        "subtasks": [],
+        "testStrategy": "Verify updates appear in real-time for connected users"
+      },
+      {
+        "id": 20,
+        "title": "Media Storage Configuration",
+        "description": "Set up Supabase Storage buckets for campaign media",
+        "priority": "medium",
+        "status": "done",
+        "dependencies": [
+          2
+        ],
+        "tags": [
+          "storage",
+          "media",
+          "supabase"
+        ],
+        "details": "Create buckets for campaign images, update photos/videos, and receipts with proper access policies",
+        "subtasks": [],
+        "testStrategy": "Test file upload, retrieval, and access permissions"
+      },
+      {
+        "id": 21,
+        "title": "Campaign Moderation System",
+        "description": "Build AI-powered content moderation for campaigns",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [
+          7
+        ],
+        "tags": [
+          "moderation",
+          "ai",
+          "backend"
+        ],
+        "details": "Implement anti-lavish checking, inappropriate content detection, and fraud pattern recognition",
+        "subtasks": [],
+        "testStrategy": "Test with various campaign content including edge cases"
+      },
+      {
+        "id": 22,
+        "title": "Moderation Edge Function",
+        "description": "Create Edge Function for automated campaign screening",
+        "priority": "high",
+        "status": "done",
+        "dependencies": [
+          21,
+          2
+        ],
+        "tags": [
+          "moderation",
+          "edge-functions",
+          "ai"
+        ],
+        "details": "Scan campaign content for luxury items, suspicious patterns, score content quality",
+        "subtasks": [],
+        "testStrategy": "Test with known good and problematic content examples"
+      },
+      {
+        "id": 23,
+        "title": "Admin Moderation Dashboard",
+        "description": "Build admin interface for manual campaign review",
+        "priority": "medium",
+        "status": "done",
+        "dependencies": [
+          21
+        ],
+        "tags": [
+          "admin",
+          "moderation",
+          "frontend"
+        ],
+        "details": "Create queue of pending campaigns, approval/rejection workflow, moderation history",
+        "subtasks": [],
+        "testStrategy": "Test complete moderation workflow from submission to decision"
+      },
+      {
+        "id": 24,
+        "title": "Notification System Architecture",
+        "description": "Design and implement notification system for updates and events",
+        "priority": "medium",
+        "status": "done",
+        "dependencies": [
+          3
+        ],
+        "tags": [
+          "notifications",
+          "backend",
+          "architecture"
+        ],
+        "details": "Create notification model, delivery preferences, and triggering system",
+        "subtasks": [],
+        "testStrategy": "Test notification creation and delivery logic"
+      },
+      {
+        "id": 25,
+        "title": "Email Notification Integration",
+        "description": "Integrate email service for sending notifications",
+        "priority": "medium",
+        "status": "done",
+        "dependencies": [
+          24
+        ],
+        "tags": [
+          "notifications",
+          "email",
+          "integration"
+        ],
+        "details": "Set up SendGrid or similar, create email templates for various notification types",
+        "subtasks": [],
+        "testStrategy": "Test email delivery for all notification types"
+      },
+      {
+        "id": 26,
+        "title": "Push Notification Setup",
+        "description": "Implement browser push notifications for real-time alerts",
+        "priority": "low",
+        "status": "done",
+        "dependencies": [
+          24
+        ],
+        "tags": [
+          "notifications",
+          "push",
+          "frontend"
+        ],
+        "details": "Implement service worker, notification permissions, and push subscription management",
+        "subtasks": [],
+        "testStrategy": "Test push notifications on various browsers"
+      },
+      {
+        "id": 27,
+        "title": "Donor Dashboard",
+        "description": "Create dashboard for donors to track their donations and impact",
+        "priority": "medium",
+        "status": "done",
+        "dependencies": [
+          12
+        ],
+        "tags": [
+          "donors",
+          "dashboard",
+          "frontend"
+        ],
+        "details": "Display donation history, campaign updates, total impact, followed campaigns",
+        "subtasks": [],
+        "testStrategy": "Verify dashboard shows accurate donation and impact data"
+      },
+      {
+        "id": 28,
+        "title": "Recipient Dashboard Enhancement",
+        "description": "Upgrade recipient dashboard with campaign management features",
+        "priority": "medium",
+        "status": "pending",
+        "dependencies": [
+          7,
+          14
+        ],
+        "tags": [
+          "recipients",
+          "dashboard",
+          "frontend"
+        ],
+        "details": "Show active campaigns, funding progress, trust score, update reminders, analytics",
+        "subtasks": [],
+        "testStrategy": "Test all dashboard features with multiple campaigns"
+      },
+      {
+        "id": 29,
+        "title": "Analytics and Reporting",
+        "description": "Implement analytics tracking and reporting features",
+        "priority": "low",
+        "status": "pending",
+        "dependencies": [
+          12,
+          7
+        ],
+        "tags": [
+          "analytics",
+          "reporting",
+          "backend"
+        ],
+        "details": "Track campaign performance, donor behavior, platform metrics. Create exportable reports",
+        "subtasks": [],
+        "testStrategy": "Verify accurate data collection and report generation"
+      },
+      {
+        "id": 30,
+        "title": "Tax Receipt Generation",
+        "description": "Build system to generate tax-deductible donation receipts",
+        "priority": "medium",
+        "status": "pending",
+        "dependencies": [
+          12
+        ],
+        "tags": [
+          "tax",
+          "receipts",
+          "backend"
+        ],
+        "details": "Generate PDF receipts with required tax information, support GiftAid for UK",
+        "subtasks": [],
+        "testStrategy": "Verify receipts contain all required tax information"
+      },
+      {
+        "id": 31,
+        "title": "Multi-language Support Enhancement",
+        "description": "Expand i18n support for all new features",
+        "priority": "low",
+        "status": "pending",
+        "dependencies": [],
+        "tags": [
+          "i18n",
+          "localization",
+          "frontend"
+        ],
+        "details": "Add translations for campaign-related content, notifications, and new UI elements",
+        "subtasks": [],
+        "testStrategy": "Test all features in supported languages"
+      },
+      {
+        "id": 32,
+        "title": "Search and Discovery Features",
+        "description": "Implement advanced search and campaign discovery",
+        "priority": "medium",
+        "status": "pending",
+        "dependencies": [
+          7
+        ],
+        "tags": [
+          "search",
+          "discovery",
+          "frontend"
+        ],
+        "details": "Add full-text search, location-based discovery, category browsing, trending campaigns",
+        "subtasks": [],
+        "testStrategy": "Test search accuracy and discovery algorithms"
+      },
+      {
+        "id": 33,
+        "title": "Mobile Responsiveness Optimization",
+        "description": "Ensure all features work perfectly on mobile devices",
+        "priority": "high",
+        "status": "pending",
+        "dependencies": [],
+        "tags": [
+          "mobile",
+          "responsive",
+          "frontend"
+        ],
+        "details": "Test and optimize all components for mobile screens, touch interactions",
+        "subtasks": [],
+        "testStrategy": "Test on various mobile devices and screen sizes"
+      },
+      {
+        "id": 34,
+        "title": "Performance Optimization",
+        "description": "Optimize application performance for fast load times",
+        "priority": "medium",
+        "status": "pending",
+        "dependencies": [],
+        "tags": [
+          "performance",
+          "optimization",
+          "frontend"
+        ],
+        "details": "Implement code splitting, lazy loading, image optimization, caching strategies",
+        "subtasks": [],
+        "testStrategy": "Measure and verify performance metrics meet requirements"
+      },
+      {
+        "id": 35,
+        "title": "Security Audit and Hardening",
+        "description": "Conduct security audit and implement recommendations",
+        "priority": "high",
+        "status": "pending",
+        "dependencies": [],
+        "tags": [
+          "security",
+          "audit",
+          "backend"
+        ],
+        "details": "Review authentication, authorization, data validation, XSS prevention, SQL injection protection",
+        "subtasks": [],
+        "testStrategy": "Run security scanning tools and penetration tests"
+      },
+      {
+        "id": 36,
+        "title": "GDPR Compliance Implementation",
+        "description": "Ensure platform meets GDPR requirements",
+        "priority": "medium",
+        "status": "pending",
+        "dependencies": [],
+        "tags": [
+          "compliance",
+          "gdpr",
+          "legal"
+        ],
+        "details": "Implement data export, deletion rights, consent management, privacy controls",
+        "subtasks": [],
+        "testStrategy": "Verify all GDPR requirements are met"
+      },
+      {
+        "id": 37,
+        "title": "Error Handling and Logging",
+        "description": "Implement comprehensive error handling and logging",
+        "priority": "medium",
+        "status": "pending",
+        "dependencies": [],
+        "tags": [
+          "errors",
+          "logging",
+          "monitoring"
+        ],
+        "details": "Set up Sentry for error tracking, implement user-friendly error messages, create admin error dashboard",
+        "subtasks": [],
+        "testStrategy": "Test error scenarios and verify proper logging"
+      },
+      {
+        "id": 38,
+        "title": "Backup and Recovery System",
+        "description": "Implement automated backup and disaster recovery",
+        "priority": "high",
+        "status": "pending",
+        "dependencies": [],
+        "tags": [
+          "backup",
+          "recovery",
+          "infrastructure"
+        ],
+        "details": "Set up automated database backups, media backup to S3, recovery procedures",
+        "subtasks": [],
+        "testStrategy": "Test backup and recovery procedures"
+      },
+      {
+        "id": 39,
+        "title": "API Documentation",
+        "description": "Create comprehensive API documentation",
+        "priority": "low",
+        "status": "pending",
+        "dependencies": [],
+        "tags": [
+          "documentation",
+          "api",
+          "developer"
+        ],
+        "details": "Document all API endpoints, authentication, request/response formats",
+        "subtasks": [],
+        "testStrategy": "Verify documentation accuracy with API tests"
+      },
+      {
+        "id": 40,
+        "title": "User Documentation and Help",
+        "description": "Create user guides and help documentation",
+        "priority": "low",
+        "status": "pending",
+        "dependencies": [],
+        "tags": [
+          "documentation",
+          "help",
+          "users"
+        ],
+        "details": "Write guides for donors and recipients, FAQ section, video tutorials",
+        "subtasks": [],
+        "testStrategy": "User testing of documentation clarity"
+      },
+      {
+        "id": 41,
+        "title": "Testing Suite Setup",
+        "description": "Implement comprehensive testing infrastructure",
+        "priority": "medium",
+        "status": "pending",
+        "dependencies": [],
+        "tags": [
+          "testing",
+          "qa",
+          "infrastructure"
+        ],
+        "details": "Set up unit tests, integration tests, E2E tests with Jest and Cypress",
+        "subtasks": [],
+        "testStrategy": "Achieve 80%+ test coverage"
+      },
+      {
+        "id": 42,
+        "title": "CI/CD Pipeline",
+        "description": "Set up continuous integration and deployment",
+        "priority": "medium",
+        "status": "pending",
+        "dependencies": [],
+        "tags": [
+          "devops",
+          "ci/cd",
+          "infrastructure"
+        ],
+        "details": "Configure GitHub Actions for automated testing, building, and deployment",
+        "subtasks": [],
+        "testStrategy": "Verify automated deployments work correctly"
+      },
+      {
+        "id": 43,
+        "title": "Launch Preparation",
+        "description": "Final preparations for public launch",
+        "priority": "high",
+        "status": "pending",
+        "dependencies": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          10,
+          11,
+          12,
+          14,
+          17,
+          21,
+          35
+        ],
+        "tags": [
+          "launch",
+          "production",
+          "deployment"
+        ],
+        "details": "Final testing, performance verification, security review, marketing materials",
+        "subtasks": [],
+        "testStrategy": "Complete launch checklist and stakeholder approval"
+      },
+      {
+        "id": 44,
+        "title": "Post-Launch Monitoring",
+        "description": "Set up monitoring and alerting for production",
+        "priority": "high",
+        "status": "pending",
+        "dependencies": [
+          43
+        ],
+        "tags": [
+          "monitoring",
+          "production",
+          "operations"
+        ],
+        "details": "Configure uptime monitoring, performance alerts, error tracking, user analytics",
+        "subtasks": [],
+        "testStrategy": "Verify all monitoring systems are operational"
+      },
+      {
+        "id": 45,
+        "title": "Future Enhancement Planning",
+        "description": "Plan for Phase 3+ microservices migration",
+        "priority": "low",
+        "status": "pending",
+        "dependencies": [
+          44
+        ],
+        "tags": [
+          "planning",
+          "architecture",
+          "future"
+        ],
+        "details": "Document migration strategy for payment service, trust scoring, and notification services to FastAPI",
+        "subtasks": [],
+        "testStrategy": "Review and approve architectural plans"
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "created": "2025-01-18",
+      "project": "Blessed-Horizon",
+      "description": "Faith-based transparent crowdfunding platform",
+      "totalTasks": 45,
+      "tagContext": {
+        "master": "Main development branch for Blessed-Horizon platform"
+      },
+      "updated": "2025-07-20T17:14:51.989Z"
+    }
+  }
+}

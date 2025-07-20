@@ -1,0 +1,88 @@
+{
+  "app": {
+    "name": "Blessed-Horizon",
+    "title": "Blessed-Horizon - Plataforma de Crowdfunding Basada en Fe",
+    "description": "Únete a nuestra plataforma de crowdfunding basada en fe que garantiza transparencia y responsabilidad a través de puntuación de confianza, carteras de depósito en garantía y actualizaciones de progreso obligatorias.",
+    "watermark": "Blessed-Horizon"
+  },
+  "header": {
+    "login": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "loginForMessages": "Por favor, inicia sesión para ver los mensajes",
+    "loginForMessagesDesc": "Necesitas una cuenta para ver tus mensajes."
+  },
+  "home": {
+    "title": "Historias de",
+    "titleHighlight": "Esperanza",
+    "subtitle": "Conéctate con una comunidad global que se preocupa. Comparte tu historia, busca apoyo y ayuda a otros a superar juntos los desafíos financieros.",
+    "shareStory": "Comparte Tu Historia",
+    "joinToShare": "Únete para Compartir Tu Historia",
+    "searchPlaceholder": "Buscar historias, nombres o lugares...",
+    "noStoriesTitle": "Aún no hay historias",
+    "noStoriesDesc": "¡Sé el primero en compartir una historia e inspirar a nuestra comunidad!",
+    "noMatch": "No se encontraron historias que coincidan con tus criterios de búsqueda."
+  },
+  "categories": {
+    "all": "Todas las Categorías",
+    "medical": "Médico",
+    "education": "Educación",
+    "housing": "Vivienda",
+    "emergency": "Emergencia",
+    "business": "Negocios"
+  },
+  "story": {
+    "urgent": "Urgente",
+    "raised": "Recaudado",
+    "goal": "Meta",
+    "supportersCount": "{{count}} seguidor",
+    "supportersCount_plural": "{{count}} seguidores",
+    "funded": "{{progress}}% financiado",
+    "support": "Apoyar Esta Historia",
+    "loginRequiredTitle": "¡Por favor, inicia sesión primero!",
+    "loginRequiredDesc": "Necesitas una cuenta para compartir una historia.",
+    "shareSuccessTitle": "¡Tu historia ha sido compartida! 💙",
+    "shareSuccessDesc": "Tu historia ya está en vivo y la gente puede empezar a apoyarte."
+  },
+  "payment": {
+    "helmetTitle": "Donar a {{storyTitle}} | Blessed-Horizon",
+    "helmetDesc": "Apoya a {{storyName}} haciendo una donación segura.",
+    "backToStories": "Volver a las Historias",
+    "title": "Donación Segura",
+    "supporting": "Estás apoyando \"{{storyTitle}}\"",
+    "progressTitle": "Progreso de la Campaña",
+    "formTitle": "Ingresa los Detalles de tu Donación",
+    "amountLabel": "Monto de la Donación ({{currency}})",
+    "exchangeRate": "1 USD ≈ {{rate}} {{code}}",
+    "cardName": "Nombre en la Tarjeta",
+    "cardNumber": "Número de Tarjeta",
+    "expiry": "MM / AA",
+    "cvc": "CVC",
+    "donateButton": "Donar {{amount}}",
+    "invalidAmountTitle": "Monto Inválido",
+    "invalidAmountDesc": "Por favor, ingresa un monto de donación válido.",
+    "incompleteFormTitle": "Formulario Incompleto",
+    "incompleteFormDesc": "Por favor, completa todos los detalles de pago."
+  },
+  "donation": {
+    "successTitle": "¡Gracias por tu donación! 🙏",
+    "successDesc": "Tu donación marcará una verdadera diferencia en la vida de alguien."
+  },
+  "auth": {
+    "loginSuccessTitle": "¡Bienvenido de nuevo, {{name}}!",
+    "loginSuccessDesc": "Has iniciado sesión correctamente.",
+    "loginFailTitle": "Error de Inicio de Sesión",
+    "loginFailDesc": "Correo electrónico o contraseña no válidos. Por favor, inténtalo de nuevo.",
+    "accountExistsTitle": "La Cuenta Ya Existe",
+    "accountExistsDesc": "Ya existe una cuenta con este correo electrónico. Por favor, inicia sesión.",
+    "welcomeTitle": "¡Bienvenido a Blessed-Horizon! 🎉",
+    "welcomeDesc": "Tu cuenta ha sido creada exitosamente.",
+    "logoutTitle": "Has cerrado sesión.",
+    "logoutDesc": "¡Esperamos verte de nuevo pronto!"
+  },
+  "community": {
+    "loginRequiredTitle": "¡Por favor, inicia sesión primero!",
+    "loginRequiredDesc": "Necesitas una cuenta para publicar.",
+    "postSuccessTitle": "¡Mensaje Publicado! 💬",
+    "postSuccessDesc": "Tu mensaje ya está en vivo en el centro comunitario."
+  }
+}
