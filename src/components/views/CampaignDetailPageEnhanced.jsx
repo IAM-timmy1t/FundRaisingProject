@@ -8,6 +8,13 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import CampaignProgress from '@/components/campaigns/CampaignProgress';
 import CampaignBudgetBreakdown from '@/components/campaigns/CampaignBudgetBreakdown';
 import CampaignUpdates from '@/components/campaigns/CampaignUpdates';
@@ -15,18 +22,22 @@ import CampaignDonateCard from '@/components/campaigns/CampaignDonateCard';
 import TrustScoreBadge from '@/components/profile/TrustScoreBadge';
 import { campaignService } from '@/lib/campaignService';
 import { useAuth } from '@/contexts/EnhancedAuthContext';
+import { useIsMobile } from '@/hooks/useMediaQuery';
 import { 
   ArrowLeft, Edit, Share2, Flag, MapPin, Globe, BookOpen, 
   Heart, MessageSquare, Users, Target, AlertCircle, Calendar,
-  TrendingUp, Eye, Share, HeartHandshake, Clock, CheckCircle
+  TrendingUp, Eye, Share, HeartHandshake, Clock, CheckCircle,
+  Info
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format, formatDistanceToNow } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 const CampaignDetailPage = () => {
   const { id: campaignId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const isMobile = useIsMobile();
   const [campaign, setCampaign] = useState(null);
   const [updates, setUpdates] = useState([]);
   const [comments, setComments] = useState([]);
@@ -34,6 +45,7 @@ const CampaignDetailPage = () => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('story');
   const [isFavorited, setIsFavorited] = useState(false);
+  const [showDonateSheet, setShowDonateSheet] = useState(false);
 
   // Load campaign data
   useEffect(() => {
@@ -122,34 +134,17 @@ const CampaignDetailPage = () => {
 
     try {
       if (isFavorited) {
-        await campaignService.removeFavorite(campaignId);
+        await campaignService.unfavoriteCampaign(campaignId);
         setIsFavorited(false);
         toast.success('Removed from favorites');
       } else {
-        await campaignService.addFavorite(campaignId);
+        await campaignService.favoriteCampaign(campaignId);
         setIsFavorited(true);
         toast.success('Added to favorites');
       }
     } catch (err) {
-      toast.error('Failed to update favorites');
-    }
-  };
-
-  const handleComment = async (content, isPrayer = false) => {
-    if (!user) {
-      toast.error('Please login to comment');
-      return;
-    }
-
-    try {
-      const comment = await campaignService.addComment(campaignId, {
-        content,
-        is_prayer: isPrayer
-      });
-      setComments([comment, ...comments]);
-      toast.success(isPrayer ? 'Prayer posted' : 'Comment posted');
-    } catch (err) {
-      toast.error('Failed to post comment');
+      console.error('Error toggling favorite:', err);
+      toast.error('Failed to update favorite status');
     }
   };
 
@@ -160,184 +155,238 @@ const CampaignDetailPage = () => {
   if (error || !campaign) {
     return (
       <Container className="py-8">
-        <div className="text-center py-12">
-          <h2 className="text-2xl font-semibold mb-2">Campaign Not Found</h2>
-          <p className="text-muted-foreground mb-6">{error || 'The campaign you are looking for does not exist.'}</p>
-          <Button onClick={() => navigate('/campaigns')}>
-            Browse Campaigns
-          </Button>
-        </div>
+        <Card className="text-center py-12">
+          <CardContent className="space-y-4">
+            <AlertCircle className="w-12 h-12 mx-auto text-destructive" />
+            <h2 className="text-2xl font-semibold">Campaign Not Found</h2>
+            <p className="text-muted-foreground">{error || 'The campaign you are looking for does not exist.'}</p>
+            <Button onClick={() => navigate('/campaigns')}>
+              Browse Campaigns
+            </Button>
+          </CardContent>
+        </Card>
       </Container>
     );
   }
 
-  const isOwner = user && campaign.recipient_id === user.id;
-  const primaryMedia = campaign.media?.find(m => m.is_primary) || campaign.media?.[0];
-  const progressPercentage = (campaign.raised_amount / campaign.goal_amount) * 100;
-  const daysLeft = campaign.deadline ? Math.ceil((new Date(campaign.deadline) - new Date()) / (1000 * 60 * 60 * 24)) : null;
-  const isUrgent = campaign.urgency === 'HIGH' || campaign.urgency === 'CRITICAL';
+  const isCreator = user && campaign.creator_id === user.id;
+  const daysLeft = campaign.deadline ? 
+    Math.max(0, Math.ceil((new Date(campaign.deadline) - new Date()) / (1000 * 60 * 60 * 24))) : 
+    null;
 
   return (
-    <Container className="py-8">
-      {/* Back Button */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => navigate('/campaigns')}
-        className="mb-4"
+    <Container className="py-4 sm:py-8">
+      {/* Back Navigation */}
+      <Button 
+        variant="ghost" 
+        onClick={() => navigate(-1)} 
+        className="mb-4 -ml-2"
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
-        Back to Campaigns
+        Back
       </Button>
 
-      {/* Campaign Header */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Campaign Image */}
-          {primaryMedia && (
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+          {/* Campaign Media */}
+          {campaign.primary_media && (
             <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
-              <img
-                src={primaryMedia.media_url}
-                alt={campaign.title}
-                className="w-full h-full object-cover"
-              />
-              {isUrgent && (
-                <Badge className="absolute top-4 left-4 bg-red-500">
-                  <AlertCircle className="w-3 h-3 mr-1" />
-                  Urgent
-                </Badge>
+              {campaign.primary_media.media_type === 'video' ? (
+                <video 
+                  controls 
+                  className="w-full h-full object-cover"
+                  poster={campaign.primary_media.thumbnail_url}
+                >
+                  <source src={campaign.primary_media.url} type="video/mp4" />
+                </video>
+              ) : (
+                <img 
+                  src={campaign.primary_media.url} 
+                  alt={campaign.title}
+                  className="w-full h-full object-cover"
+                />
               )}
-              {campaign.featured && (
-                <Badge className="absolute top-4 right-4 bg-yellow-500">
-                  Featured
-                </Badge>
-              )}
+              
+              {/* Mobile Action Buttons Overlay */}
+              <div className="absolute top-2 right-2 flex gap-2 lg:hidden">
+                <Button 
+                  size="icon" 
+                  variant="secondary" 
+                  className="bg-white/90 backdrop-blur-sm"
+                  onClick={handleShare}
+                >
+                  <Share2 className="w-4 h-4" />
+                </Button>
+                <Button 
+                  size="icon" 
+                  variant="secondary" 
+                  className={cn(
+                    "bg-white/90 backdrop-blur-sm",
+                    isFavorited && "text-red-500"
+                  )}
+                  onClick={handleFavorite}
+                >
+                  <Heart className={cn("w-4 h-4", isFavorited && "fill-current")} />
+                </Button>
+              </div>
             </div>
           )}
 
-          {/* Title and Meta */}
+          {/* Campaign Header */}
           <div className="space-y-4">
             <div>
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h1 className="text-3xl font-bold">{campaign.title}</h1>
-                  {campaign.subtitle && (
-                    <p className="text-lg text-muted-foreground mt-2">{campaign.subtitle}</p>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  {isOwner && campaign.can_edit && (
-                    <Button variant="outline" size="sm" onClick={handleEdit}>
-                      <Edit className="w-4 h-4 mr-1" />
-                      Edit
-                    </Button>
-                  )}
-                  <Button 
-                    variant={isFavorited ? "default" : "outline"} 
-                    size="sm" 
-                    onClick={handleFavorite}
-                  >
-                    <Heart className={`w-4 h-4 ${isFavorited ? 'fill-current' : ''}`} />
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={handleShare}>
-                    <Share2 className="w-4 h-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={handleReport}>
-                    <Flag className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
+                {campaign.title}
+              </h1>
+              {campaign.subtitle && (
+                <p className="text-base sm:text-lg text-muted-foreground mt-2">
+                  {campaign.subtitle}
+                </p>
+              )}
+            </div>
+
+            {/* Mobile Progress Card */}
+            <div className="lg:hidden">
+              <CampaignProgress 
+                raisedAmount={campaign.raised_amount}
+                goalAmount={campaign.goal_amount}
+                donorCount={campaign.donor_count}
+                daysLeft={daysLeft}
+                className="mb-4"
+              />
               
-              <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-muted-foreground">
-                {campaign.category && (
-                  <Badge variant="secondary">{campaign.category.name}</Badge>
+              <div className="flex gap-2">
+                <Sheet open={showDonateSheet} onOpenChange={setShowDonateSheet}>
+                  <SheetTrigger asChild>
+                    <Button className="flex-1" size="lg">
+                      Donate Now
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="bottom" className="h-[80vh]">
+                    <SheetHeader>
+                      <SheetTitle>Make a Donation</SheetTitle>
+                    </SheetHeader>
+                    <div className="mt-4 overflow-y-auto max-h-[calc(80vh-8rem)]">
+                      <CampaignDonateCard campaign={campaign} />
+                    </div>
+                  </SheetContent>
+                </Sheet>
+                
+                {isCreator && (
+                  <Button variant="outline" onClick={handleEdit}>
+                    <Edit className="w-4 h-4" />
+                  </Button>
                 )}
-                {campaign.location_city || campaign.location_country ? (
-                  <span className="flex items-center gap-1">
-                    <MapPin className="w-3 h-3" />
-                    {[campaign.location_city, campaign.location_country].filter(Boolean).join(', ')}
-                  </span>
-                ) : null}
-                {campaign.need_type && (
-                  <Badge variant="outline">{campaign.need_type.replace('_', ' ')}</Badge>
-                )}
-                <span className="flex items-center gap-1">
-                  <Eye className="w-3 h-3" />
-                  {campaign.view_count} views
-                </span>
-                <span className="flex items-center gap-1">
-                  <Share className="w-3 h-3" />
-                  {campaign.share_count} shares
-                </span>
               </div>
             </div>
 
-            {/* Creator Info */}
-            {campaign.recipient && (
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarImage src={campaign.recipient.profile_image_url} />
-                        <AvatarFallback>
-                          {campaign.recipient.display_name?.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Campaign by</p>
-                        <p className="font-medium">{campaign.recipient.display_name}</p>
-                        {campaign.recipient.country_iso && (
-                          <p className="text-sm text-muted-foreground flex items-center gap-1">
-                            <Globe className="w-3 h-3" />
-                            {campaign.recipient.country_iso}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <TrustScoreBadge
-                        score={campaign.recipient.trust_score}
-                        tier={campaign.recipient.trust_tier}
-                        size="default"
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {campaign.recipient.campaigns_created} campaigns
-                      </p>
+            {/* Meta Information */}
+            <div className="flex flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span>Started {formatDistanceToNow(new Date(campaign.created_at))} ago</span>
+              </div>
+              {campaign.location && (
+                <div className="flex items-center gap-1">
+                  <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span>{campaign.location}</span>
+                </div>
+              )}
+              <div className="flex items-center gap-1">
+                <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span>{campaign.view_count} views</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Share className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span>{campaign.share_count} shares</span>
+              </div>
+            </div>
+
+            {/* Action Buttons - Desktop Only */}
+            <div className="hidden lg:flex gap-4">
+              <Button 
+                variant="outline" 
+                onClick={handleShare}
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                Share
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={handleFavorite}
+                className={cn(isFavorited && "text-red-500")}
+              >
+                <Heart className={cn("w-4 h-4 mr-2", isFavorited && "fill-current")} />
+                {isFavorited ? 'Favorited' : 'Favorite'}
+              </Button>
+              {isCreator && (
+                <Button variant="outline" onClick={handleEdit}>
+                  <Edit className="w-4 h-4 mr-2" />
+                  Edit Campaign
+                </Button>
+              )}
+              <Button variant="ghost" size="sm" onClick={handleReport}>
+                <Flag className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Campaign Creator Card - Mobile */}
+          {campaign.recipient && (
+            <Card className="lg:hidden">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <Avatar>
+                      <AvatarImage src={campaign.recipient.avatar_url} />
+                      <AvatarFallback>
+                        {campaign.recipient.name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium text-sm">{campaign.recipient.name}</p>
+                      <p className="text-xs text-muted-foreground">Campaign Organizer</p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+                  <TrustScoreBadge
+                    score={campaign.recipient.trust_score}
+                    tier={campaign.recipient.trust_tier}
+                    size="sm"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Content Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="story">Story</TabsTrigger>
-              <TabsTrigger value="budget">Budget</TabsTrigger>
-              <TabsTrigger value="updates">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
+              <TabsTrigger value="story" className="text-xs sm:text-sm">Story</TabsTrigger>
+              <TabsTrigger value="budget" className="text-xs sm:text-sm">Budget</TabsTrigger>
+              <TabsTrigger value="updates" className="text-xs sm:text-sm">
                 Updates {updates.length > 0 && `(${updates.length})`}
               </TabsTrigger>
-              <TabsTrigger value="comments">
+              <TabsTrigger value="comments" className="text-xs sm:text-sm">
                 Comments {comments.length > 0 && `(${comments.length})`}
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="story" className="space-y-6">
+            <TabsContent value="story" className="space-y-4 sm:space-y-6">
               {/* Campaign Story */}
-              <div className="prose prose-gray dark:prose-invert max-w-none">
+              <div className="prose prose-sm sm:prose prose-gray dark:prose-invert max-w-none">
                 <p className="whitespace-pre-wrap">{campaign.story_markdown || campaign.story}</p>
               </div>
               
               {campaign.scripture_reference && (
-                <div className="p-4 bg-muted/50 rounded-lg border-l-4 border-primary">
+                <div className="p-3 sm:p-4 bg-muted/50 rounded-lg border-l-4 border-primary">
                   <div className="flex items-start gap-2">
-                    <BookOpen className="w-5 h-5 text-primary mt-0.5" />
+                    <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-primary mt-0.5" />
                     <div>
-                      <p className="font-medium text-sm">Scripture Reference</p>
-                      <p className="text-sm mt-1">{campaign.scripture_reference}</p>
+                      <p className="font-medium text-xs sm:text-sm">Scripture Reference</p>
+                      <p className="text-xs sm:text-sm mt-1">{campaign.scripture_reference}</p>
                     </div>
                   </div>
                 </div>
@@ -345,14 +394,14 @@ const CampaignDetailPage = () => {
 
               {campaign.prayer_request && (
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <HeartHandshake className="w-5 h-5" />
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                      <HeartHandshake className="w-4 h-4 sm:w-5 sm:h-5" />
                       Prayer Request
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm">{campaign.prayer_request}</p>
+                    <p className="text-xs sm:text-sm">{campaign.prayer_request}</p>
                   </CardContent>
                 </Card>
               )}
@@ -360,9 +409,9 @@ const CampaignDetailPage = () => {
               {/* Expected Outcomes */}
               {campaign.expected_outcomes && campaign.expected_outcomes.length > 0 && (
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Target className="w-5 h-5" />
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                      <Target className="w-4 h-4 sm:w-5 sm:h-5" />
                       Expected Outcomes
                     </CardTitle>
                   </CardHeader>
@@ -370,8 +419,8 @@ const CampaignDetailPage = () => {
                     <ul className="space-y-2">
                       {campaign.expected_outcomes.map((outcome, index) => (
                         <li key={index} className="flex items-start gap-2">
-                          <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
-                          <span className="text-sm">{outcome}</span>
+                          <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 mt-0.5" />
+                          <span className="text-xs sm:text-sm">{outcome}</span>
                         </li>
                       ))}
                     </ul>
@@ -382,25 +431,25 @@ const CampaignDetailPage = () => {
               {/* Beneficiaries */}
               {campaign.beneficiaries && campaign.beneficiaries.length > 0 && (
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Users className="w-5 h-5" />
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                      <Users className="w-4 h-4 sm:w-5 sm:h-5" />
                       Who We're Helping
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
                       {campaign.beneficiaries.map((beneficiary, index) => (
                         <div key={index} className="space-y-1">
-                          <p className="font-medium">{beneficiary.name}</p>
+                          <p className="font-medium text-sm">{beneficiary.name}</p>
                           {beneficiary.age && (
-                            <p className="text-sm text-muted-foreground">Age: {beneficiary.age}</p>
+                            <p className="text-xs sm:text-sm text-muted-foreground">Age: {beneficiary.age}</p>
                           )}
                           {beneficiary.relationship && (
-                            <p className="text-sm text-muted-foreground">{beneficiary.relationship}</p>
+                            <p className="text-xs sm:text-sm text-muted-foreground">{beneficiary.relationship}</p>
                           )}
                           {beneficiary.description && (
-                            <p className="text-sm">{beneficiary.description}</p>
+                            <p className="text-xs sm:text-sm">{beneficiary.description}</p>
                           )}
                         </div>
                       ))}
@@ -416,191 +465,86 @@ const CampaignDetailPage = () => {
 
             <TabsContent value="updates">
               <CampaignUpdates updates={updates} />
-              {updates.length === 0 && (
-                <Card>
-                  <CardContent className="py-8 text-center text-muted-foreground">
-                    No updates yet. Check back soon!
-                  </CardContent>
-                </Card>
-              )}
             </TabsContent>
 
-            <TabsContent value="comments" className="space-y-4">
-              {user && (
-                <Card>
-                  <CardContent className="p-4">
-                    <form onSubmit={(e) => {
-                      e.preventDefault();
-                      const formData = new FormData(e.target);
-                      handleComment(formData.get('comment'), formData.get('is_prayer') === 'on');
-                      e.target.reset();
-                    }}>
-                      <textarea
-                        name="comment"
-                        placeholder="Leave a comment or prayer..."
-                        className="w-full p-3 border rounded-lg resize-none"
-                        rows={3}
-                        required
-                      />
-                      <div className="flex justify-between items-center mt-2">
-                        <label className="flex items-center gap-2 text-sm">
-                          <input type="checkbox" name="is_prayer" />
-                          This is a prayer
-                        </label>
-                        <Button type="submit" size="sm">
-                          <MessageSquare className="w-4 h-4 mr-2" />
-                          Post
-                        </Button>
-                      </div>
-                    </form>
-                  </CardContent>
-                </Card>
-              )}
-
-              {comments.length > 0 ? (
-                <div className="space-y-4">
-                  {comments.map((comment) => (
-                    <Card key={comment.id}>
-                      <CardContent className="p-4">
-                        <div className="flex items-start gap-3">
-                          <Avatar className="w-8 h-8">
-                            <AvatarFallback>
-                              {comment.user?.display_name?.charAt(0).toUpperCase() || 'A'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <p className="font-medium text-sm">
-                                {comment.is_anonymous ? 'Anonymous' : comment.user?.display_name}
-                              </p>
-                              {comment.is_prayer && (
-                                <Badge variant="secondary" className="text-xs">
-                                  Prayer
-                                </Badge>
-                              )}
-                              <span className="text-xs text-muted-foreground">
-                                {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
-                              </span>
-                            </div>
-                            <p className="text-sm mt-1">{comment.content}</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <Card>
-                  <CardContent className="py-8 text-center text-muted-foreground">
-                    No comments yet. Be the first to show support!
-                  </CardContent>
-                </Card>
-              )}
+            <TabsContent value="comments">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5" />
+                    Comments
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {comments.length === 0 ? (
+                    <p className="text-center text-muted-foreground py-8">
+                      No comments yet. Be the first to show support!
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      {/* Comments would be rendered here */}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
-
-          {/* Tags */}
-          {campaign.tags && campaign.tags.length > 0 && (
-            <div className="pt-4">
-              <div className="flex flex-wrap gap-2">
-                {campaign.tags.map((tag, index) => (
-                  <Badge key={index} variant="outline" className="text-xs">
-                    #{tag}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Sidebar */}
-        <div className="lg:col-span-1 space-y-6">
+        {/* Sidebar - Desktop Only */}
+        <div className="hidden lg:block lg:col-span-1 space-y-6">
           {/* Progress Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Campaign Progress</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="font-medium">
-                    ${campaign.raised_amount.toLocaleString()}
-                  </span>
-                  <span className="text-muted-foreground">
-                    of ${campaign.goal_amount.toLocaleString()} goal
-                  </span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
-                  <div 
-                    className="bg-primary h-full transition-all duration-500 ease-out"
-                    style={{ width: `${Math.min(progressPercentage, 100)}%` }}
-                  />
-                </div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  {progressPercentage.toFixed(1)}% funded
-                </p>
+          <Card className="sticky top-20">
+            <CardContent className="p-6">
+              <CampaignProgress 
+                raisedAmount={campaign.raised_amount}
+                goalAmount={campaign.goal_amount}
+                donorCount={campaign.donor_count}
+                daysLeft={daysLeft}
+              />
+              
+              <div className="mt-6 space-y-3">
+                <CampaignDonateCard campaign={campaign} />
               </div>
-
-              <Separator />
-
-              <div className="grid grid-cols-2 gap-4 text-center">
-                <div>
-                  <p className="text-2xl font-semibold">{campaign.donor_count}</p>
-                  <p className="text-sm text-muted-foreground">Donors</p>
-                </div>
-                <div>
-                  {daysLeft !== null ? (
-                    <>
-                      <p className="text-2xl font-semibold">
-                        {daysLeft > 0 ? daysLeft : 0}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Days left
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <Clock className="w-8 h-8 mx-auto text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
-                        No deadline
-                      </p>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              {campaign.average_donation > 0 && (
-                <>
-                  <Separator />
-                  <div className="text-center">
-                    <p className="text-lg font-semibold">
-                      ${campaign.average_donation.toFixed(2)}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Average donation
-                    </p>
-                  </div>
-                </>
-              )}
-
-              {/* Next Update Due */}
-              {campaign.next_update_due && (
-                <>
-                  <Separator />
-                  <div className="flex items-center gap-2 text-sm">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">
-                      Next update expected{' '}
-                      {formatDistanceToNow(new Date(campaign.next_update_due), { addSuffix: true })}
-                    </span>
-                  </div>
-                </>
-              )}
             </CardContent>
           </Card>
 
-          {/* Donate Card */}
-          <CampaignDonateCard campaign={campaign} />
+          {/* Campaign Creator */}
+          {campaign.recipient && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Campaign Organizer</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="w-12 h-12">
+                      <AvatarImage src={campaign.recipient.avatar_url} />
+                      <AvatarFallback>
+                        {campaign.recipient.name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium">{campaign.recipient.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {campaign.recipient.bio || 'Campaign organizer'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <TrustScoreBadge
+                      score={campaign.recipient.trust_score}
+                      tier={campaign.recipient.trust_tier}
+                      size="default"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {campaign.recipient.campaigns_created} campaigns
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Recent Donations */}
           {campaign.recent_donations && campaign.recent_donations.length > 0 && (
@@ -682,32 +626,101 @@ const CampaignDetailPage = () => {
           </Card>
         </div>
       </div>
+
+      {/* Mobile Bottom Stats */}
+      <div className="lg:hidden mt-6 space-y-4">
+        {/* Recent Donations */}
+        {campaign.recent_donations && campaign.recent_donations.length > 0 && (
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <TrendingUp className="w-4 h-4" />
+                Recent Donations
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {campaign.recent_donations.slice(0, 3).map((donation, index) => (
+                  <div key={donation.id || index} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Avatar className="w-6 h-6">
+                        <AvatarFallback className="text-xs">
+                          {donation.is_anonymous ? '?' : donation.donor_name?.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm">
+                        {donation.is_anonymous ? 'Anonymous' : donation.donor_name}
+                      </span>
+                    </div>
+                    <span className="text-sm font-semibold">
+                      ${donation.amount}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        
+        {/* Campaign Stats */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Campaign Stats</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <dl className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <dt className="text-muted-foreground">Created</dt>
+                <dd className="font-medium">
+                  {format(new Date(campaign.created_at), 'MMM d, yyyy')}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Updates</dt>
+                <dd className="font-medium">{updates.length}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Favorites</dt>
+                <dd className="font-medium">{campaign.favorite_count}</dd>
+              </div>
+              {campaign.repeat_donor_rate > 0 && (
+                <div>
+                  <dt className="text-muted-foreground">Repeat donors</dt>
+                  <dd className="font-medium">
+                    {(campaign.repeat_donor_rate * 100).toFixed(1)}%
+                  </dd>
+                </div>
+              )}
+            </dl>
+          </CardContent>
+        </Card>
+      </div>
     </Container>
   );
 };
 
 // Loading skeleton component
 const CampaignDetailSkeleton = () => (
-  <Container className="py-8">
+  <Container className="py-4 sm:py-8">
     <Skeleton className="h-8 w-32 mb-4" />
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div className="lg:col-span-2 space-y-6">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+      <div className="lg:col-span-2 space-y-4 sm:space-y-6">
         <Skeleton className="aspect-video rounded-lg" />
         <div className="space-y-4">
-          <Skeleton className="h-10 w-3/4" />
+          <Skeleton className="h-8 sm:h-10 w-3/4" />
           <div className="flex gap-4">
             <Skeleton className="h-6 w-24" />
             <Skeleton className="h-6 w-32" />
           </div>
           <Skeleton className="h-20 w-full" />
         </div>
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-48 w-full" />
+        <Skeleton className="h-48 sm:h-64 w-full" />
+        <Skeleton className="h-36 sm:h-48 w-full" />
       </div>
-      <div className="lg:col-span-1 space-y-6">
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-80 w-full" />
-        <Skeleton className="h-48 w-full" />
+      <div className="lg:col-span-1 space-y-4 sm:space-y-6">
+        <Skeleton className="h-48 sm:h-64 w-full" />
+        <Skeleton className="h-64 sm:h-80 w-full hidden lg:block" />
+        <Skeleton className="h-36 sm:h-48 w-full hidden lg:block" />
       </div>
     </div>
   </Container>
