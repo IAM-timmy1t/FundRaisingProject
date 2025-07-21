@@ -1,0 +1,805 @@
+openapi: 3.0.0
+info:
+  title: Trust Score Service API
+  version: 1.0.0
+  description: Calculates and manages trust scores for campaigns and users on the Blessed Horizon platform
+  contact:
+    name: Trust & Safety Team
+    email: trust@blessedhorizon.org
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.blessedhorizon.org/v1/trust
+    description: Production server
+  - url: https://staging-api.blessedhorizon.org/v1/trust
+    description: Staging server
+  - url: http://localhost:3002
+    description: Development server
+
+paths:
+  /scores/campaign/{campaignId}:
+    get:
+      summary: Get campaign trust score
+      operationId: getCampaignTrustScore
+      tags:
+        - Campaign Scores
+      parameters:
+        - name: campaignId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: detailed
+          in: query
+          description: Include detailed breakdown
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Campaign trust score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustScoreResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    post:
+      summary: Recalculate campaign trust score
+      operationId: recalculateCampaignScore
+      tags:
+        - Campaign Scores
+      parameters:
+        - name: campaignId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecalculateRequest'
+      responses:
+        '200':
+          description: Updated trust score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustScoreResponse'
+        '202':
+          description: Recalculation queued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+
+  /scores/user/{userId}:
+    get:
+      summary: Get user trust score
+      operationId: getUserTrustScore
+      tags:
+        - User Scores
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: detailed
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: User trust score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustScoreResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /scores/batch:
+    post:
+      summary: Get trust scores for multiple entities
+      operationId: getBatchTrustScores
+      tags:
+        - Batch Operations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchScoreRequest'
+      responses:
+        '200':
+          description: Batch trust scores
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchScoreResponse'
+
+  /factors:
+    get:
+      summary: List all trust score factors
+      operationId: listTrustFactors
+      tags:
+        - Trust Factors
+      responses:
+        '200':
+          description: List of trust factors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustFactorList'
+    
+    post:
+      summary: Create a new trust factor
+      operationId: createTrustFactor
+      tags:
+        - Trust Factors
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrustFactorRequest'
+      responses:
+        '201':
+          description: Trust factor created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustFactor'
+
+  /factors/{factorId}:
+    put:
+      summary: Update trust factor configuration
+      operationId: updateTrustFactor
+      tags:
+        - Trust Factors
+      parameters:
+        - name: factorId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrustFactorUpdate'
+      responses:
+        '200':
+          description: Trust factor updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustFactor'
+
+  /reports:
+    post:
+      summary: Submit a trust report
+      operationId: submitTrustReport
+      tags:
+        - Reports
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrustReportRequest'
+      responses:
+        '201':
+          description: Report submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustReport'
+    
+    get:
+      summary: List trust reports
+      operationId: listTrustReports
+      tags:
+        - Reports
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: entity_type
+          in: query
+          schema:
+            type: string
+            enum: [campaign, user]
+        - name: entity_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, reviewing, resolved, dismissed]
+      responses:
+        '200':
+          description: List of trust reports
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustReportList'
+
+  /reports/{reportId}/review:
+    post:
+      summary: Review a trust report
+      operationId: reviewTrustReport
+      tags:
+        - Reports
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportReviewRequest'
+      responses:
+        '200':
+          description: Report reviewed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustReport'
+
+  /verification/request:
+    post:
+      summary: Request identity verification
+      operationId: requestVerification
+      tags:
+        - Verification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+      responses:
+        '201':
+          description: Verification requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationResponse'
+
+  /verification/{verificationId}/submit:
+    post:
+      summary: Submit verification documents
+      operationId: submitVerificationDocuments
+      tags:
+        - Verification
+      parameters:
+        - name: verificationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                document_type:
+                  type: string
+                  enum: [passport, drivers_license, national_id]
+                front_image:
+                  type: string
+                  format: binary
+                back_image:
+                  type: string
+                  format: binary
+                selfie:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Documents submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationResponse'
+
+  /analytics/trends:
+    get:
+      summary: Get trust score trends
+      operationId: getTrustTrends
+      tags:
+        - Analytics
+      parameters:
+        - name: entity_type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [campaign, user, platform]
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [daily, weekly, monthly]
+            default: weekly
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Trust score trends
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustTrendResponse'
+
+components:
+  schemas:
+    TrustScoreResponse:
+      type: object
+      properties:
+        entity_id:
+          type: string
+          format: uuid
+        entity_type:
+          type: string
+          enum: [campaign, user]
+        score:
+          type: number
+          minimum: 0
+          maximum: 100
+        rating:
+          type: string
+          enum: [excellent, good, fair, poor, unrated]
+        factors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScoreFactor'
+        last_calculated:
+          type: string
+          format: date-time
+        confidence_level:
+          type: string
+          enum: [high, medium, low]
+        verification_status:
+          type: string
+          enum: [verified, unverified, pending, failed]
+
+    ScoreFactor:
+      type: object
+      properties:
+        factor_id:
+          type: string
+        name:
+          type: string
+        weight:
+          type: number
+        score:
+          type: number
+        impact:
+          type: string
+          enum: [positive, negative, neutral]
+        details:
+          type: object
+
+    RecalculateRequest:
+      type: object
+      properties:
+        force:
+          type: boolean
+          default: false
+        factors:
+          type: array
+          items:
+            type: string
+          description: Specific factors to recalculate
+
+    BatchScoreRequest:
+      type: object
+      required:
+        - entity_ids
+        - entity_type
+      properties:
+        entity_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          maxItems: 100
+        entity_type:
+          type: string
+          enum: [campaign, user]
+        include_details:
+          type: boolean
+          default: false
+
+    BatchScoreResponse:
+      type: object
+      properties:
+        scores:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrustScoreResponse'
+        failed_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    TrustFactor:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+          enum: [identity, behavior, social, financial, content]
+        weight:
+          type: number
+          minimum: 0
+          maximum: 1
+        enabled:
+          type: boolean
+        configuration:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    TrustFactorRequest:
+      type: object
+      required:
+        - name
+        - category
+        - weight
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+          enum: [identity, behavior, social, financial, content]
+        weight:
+          type: number
+          minimum: 0
+          maximum: 1
+        configuration:
+          type: object
+
+    TrustFactorUpdate:
+      type: object
+      properties:
+        weight:
+          type: number
+          minimum: 0
+          maximum: 1
+        enabled:
+          type: boolean
+        configuration:
+          type: object
+
+    TrustFactorList:
+      type: object
+      properties:
+        factors:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrustFactor'
+        total_weight:
+          type: number
+
+    TrustReportRequest:
+      type: object
+      required:
+        - entity_type
+        - entity_id
+        - reason
+      properties:
+        entity_type:
+          type: string
+          enum: [campaign, user]
+        entity_id:
+          type: string
+          format: uuid
+        reason:
+          type: string
+          enum: [fraud, spam, inappropriate, misleading, other]
+        description:
+          type: string
+          maxLength: 1000
+        evidence_urls:
+          type: array
+          items:
+            type: string
+            format: uri
+
+    TrustReport:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        entity_type:
+          type: string
+        entity_id:
+          type: string
+          format: uuid
+        reporter_id:
+          type: string
+          format: uuid
+        reason:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [pending, reviewing, resolved, dismissed]
+        outcome:
+          type: string
+          enum: [verified, unverified, action_taken, no_action]
+        created_at:
+          type: string
+          format: date-time
+        reviewed_at:
+          type: string
+          format: date-time
+        reviewer_id:
+          type: string
+          format: uuid
+
+    ReportReviewRequest:
+      type: object
+      required:
+        - status
+        - outcome
+      properties:
+        status:
+          type: string
+          enum: [resolved, dismissed]
+        outcome:
+          type: string
+          enum: [verified, unverified, action_taken, no_action]
+        notes:
+          type: string
+        score_impact:
+          type: number
+          description: Impact on trust score (-100 to 100)
+
+    TrustReportList:
+      type: object
+      properties:
+        reports:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrustReport'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    VerificationRequest:
+      type: object
+      required:
+        - user_id
+        - verification_type
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        verification_type:
+          type: string
+          enum: [identity, address, financial]
+        purpose:
+          type: string
+          enum: [campaign_creation, high_value_donation, withdrawal]
+
+    VerificationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        verification_type:
+          type: string
+        status:
+          type: string
+          enum: [pending, processing, approved, rejected, expired]
+        verification_url:
+          type: string
+          format: uri
+        expires_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+        rejection_reason:
+          type: string
+
+    TrustTrendResponse:
+      type: object
+      properties:
+        entity_type:
+          type: string
+        period:
+          type: string
+        data_points:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              average_score:
+                type: number
+              total_entities:
+                type: integer
+              score_distribution:
+                type: object
+                properties:
+                  excellent:
+                    type: integer
+                  good:
+                    type: integer
+                  fair:
+                    type: integer
+                  poor:
+                    type: integer
+                  unrated:
+                    type: integer
+
+    JobResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [queued, processing, completed, failed]
+        created_at:
+          type: string
+          format: date-time
+        estimated_completion:
+          type: string
+          format: date-time
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        total_pages:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    
+    LimitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+security:
+  - bearerAuth: []
+  - apiKey: []
+
+tags:
+  - name: Campaign Scores
+    description: Campaign trust score operations
+  - name: User Scores
+    description: User trust score operations
+  - name: Batch Operations
+    description: Batch score calculations
+  - name: Trust Factors
+    description: Trust factor configuration
+  - name: Reports
+    description: Trust report management
+  - name: Verification
+    description: Identity verification
+  - name: Analytics
+    description: Trust analytics and trends

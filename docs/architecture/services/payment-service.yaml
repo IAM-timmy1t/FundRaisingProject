@@ -1,0 +1,567 @@
+openapi: 3.0.0
+info:
+  title: Payment Service API
+  version: 1.0.0
+  description: Handles all payment-related operations for the Blessed Horizon platform
+  contact:
+    name: Payment Service Team
+    email: payments@blessedhorizon.org
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.blessedhorizon.org/v1/payment
+    description: Production server
+  - url: https://staging-api.blessedhorizon.org/v1/payment
+    description: Staging server
+  - url: http://localhost:3001
+    description: Development server
+
+paths:
+  /donations:
+    post:
+      summary: Create a new donation
+      operationId: createDonation
+      tags:
+        - Donations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DonationRequest'
+      responses:
+        '201':
+          description: Donation created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DonationResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    
+    get:
+      summary: List donations
+      operationId: listDonations
+      tags:
+        - Donations
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: campaign_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: donor_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, completed, failed, refunded]
+      responses:
+        '200':
+          description: List of donations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DonationList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /donations/{donationId}:
+    get:
+      summary: Get donation details
+      operationId: getDonation
+      tags:
+        - Donations
+      parameters:
+        - name: donationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Donation details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DonationResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /donations/{donationId}/refund:
+    post:
+      summary: Refund a donation
+      operationId: refundDonation
+      tags:
+        - Refunds
+      parameters:
+        - name: donationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+      responses:
+        '200':
+          description: Refund processed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefundResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /subscriptions:
+    post:
+      summary: Create a recurring donation subscription
+      operationId: createSubscription
+      tags:
+        - Subscriptions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionRequest'
+      responses:
+        '201':
+          description: Subscription created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+    
+    get:
+      summary: List subscriptions
+      operationId: listSubscriptions
+      tags:
+        - Subscriptions
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: donor_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, paused, cancelled]
+      responses:
+        '200':
+          description: List of subscriptions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionList'
+
+  /subscriptions/{subscriptionId}/cancel:
+    post:
+      summary: Cancel a subscription
+      operationId: cancelSubscription
+      tags:
+        - Subscriptions
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Subscription cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+
+  /payment-methods:
+    post:
+      summary: Add a payment method
+      operationId: addPaymentMethod
+      tags:
+        - Payment Methods
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentMethodRequest'
+      responses:
+        '201':
+          description: Payment method added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethodResponse'
+
+  /webhooks/stripe:
+    post:
+      summary: Handle Stripe webhooks
+      operationId: handleStripeWebhook
+      tags:
+        - Webhooks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Webhook processed
+        '400':
+          description: Invalid webhook
+
+components:
+  schemas:
+    DonationRequest:
+      type: object
+      required:
+        - campaign_id
+        - amount
+        - currency
+        - payment_method_id
+      properties:
+        campaign_id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+          minimum: 1
+        currency:
+          type: string
+          enum: [USD, EUR, GBP, CAD]
+        payment_method_id:
+          type: string
+        donor_info:
+          $ref: '#/components/schemas/DonorInfo'
+        anonymous:
+          type: boolean
+          default: false
+        message:
+          type: string
+          maxLength: 500
+
+    DonationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        campaign_id:
+          type: string
+          format: uuid
+        donor_id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+        currency:
+          type: string
+        status:
+          type: string
+          enum: [pending, completed, failed, refunded]
+        stripe_payment_intent_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+        receipt_url:
+          type: string
+          format: uri
+
+    DonorInfo:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+
+    Address:
+      type: object
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postal_code:
+          type: string
+        country:
+          type: string
+
+    RefundRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          enum: [duplicate, fraudulent, requested_by_customer, other]
+        amount:
+          type: number
+          description: Partial refund amount (optional)
+        notes:
+          type: string
+
+    RefundResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        donation_id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+        currency:
+          type: string
+        status:
+          type: string
+          enum: [pending, completed, failed]
+        reason:
+          type: string
+        processed_at:
+          type: string
+          format: date-time
+
+    SubscriptionRequest:
+      type: object
+      required:
+        - campaign_id
+        - amount
+        - currency
+        - frequency
+        - payment_method_id
+      properties:
+        campaign_id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+          minimum: 5
+        currency:
+          type: string
+        frequency:
+          type: string
+          enum: [monthly, quarterly, annually]
+        payment_method_id:
+          type: string
+        start_date:
+          type: string
+          format: date
+
+    SubscriptionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        campaign_id:
+          type: string
+          format: uuid
+        donor_id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+        currency:
+          type: string
+        frequency:
+          type: string
+        status:
+          type: string
+          enum: [active, paused, cancelled]
+        next_payment_date:
+          type: string
+          format: date
+        created_at:
+          type: string
+          format: date-time
+
+    PaymentMethodRequest:
+      type: object
+      required:
+        - type
+        - stripe_payment_method_id
+      properties:
+        type:
+          type: string
+          enum: [card, bank_account]
+        stripe_payment_method_id:
+          type: string
+        set_as_default:
+          type: boolean
+          default: false
+
+    PaymentMethodResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+        last_four:
+          type: string
+        brand:
+          type: string
+        exp_month:
+          type: integer
+        exp_year:
+          type: integer
+        is_default:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+
+    DonationList:
+      type: object
+      properties:
+        donations:
+          type: array
+          items:
+            $ref: '#/components/schemas/DonationResponse'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    SubscriptionList:
+      type: object
+      properties:
+        subscriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionResponse'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        total_pages:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    
+    LimitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+security:
+  - bearerAuth: []
+  - apiKey: []
+
+tags:
+  - name: Donations
+    description: Donation management endpoints
+  - name: Refunds
+    description: Refund processing endpoints
+  - name: Subscriptions
+    description: Recurring donation endpoints
+  - name: Payment Methods
+    description: Payment method management
+  - name: Webhooks
+    description: External webhook handlers

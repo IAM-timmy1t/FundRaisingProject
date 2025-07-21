@@ -404,6 +404,7 @@ const CampaignDetailPageRealtime = () => {
         />
       )}
     </Container>
+    </>
   );
 };
 

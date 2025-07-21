@@ -1,0 +1,710 @@
+openapi: 3.0.0
+info:
+  title: Notification Service API
+  version: 1.0.0
+  description: Microservice for managing notifications across multiple channels
+  contact:
+    name: Blessed Horizon API Support
+    email: api-support@blessedhorizon.org
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.blessedhorizon.org/v1/notifications
+    description: Production server
+  - url: https://staging-api.blessedhorizon.org/v1/notifications
+    description: Staging server
+  - url: http://localhost:3002
+    description: Development server
+
+paths:
+  /notifications/send:
+    post:
+      summary: Send notification
+      description: Send a notification through one or multiple channels
+      operationId: sendNotification
+      tags:
+        - Notifications
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendNotificationRequest'
+      responses:
+        '200':
+          description: Notification sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /notifications/batch:
+    post:
+      summary: Send batch notifications
+      description: Send notifications to multiple recipients
+      operationId: sendBatchNotifications
+      tags:
+        - Notifications
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchNotificationRequest'
+      responses:
+        '200':
+          description: Batch notifications queued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchNotificationResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /notifications/templates:
+    get:
+      summary: List notification templates
+      description: Retrieve available notification templates
+      operationId: listTemplates
+      tags:
+        - Templates
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: channel
+          in: query
+          schema:
+            type: string
+            enum: [email, sms, push, in_app]
+        - name: category
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  templates:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NotificationTemplate'
+    
+    post:
+      summary: Create notification template
+      description: Create a new notification template
+      operationId: createTemplate
+      tags:
+        - Templates
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTemplateRequest'
+      responses:
+        '201':
+          description: Template created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationTemplate'
+
+  /notifications/templates/{templateId}:
+    parameters:
+      - name: templateId
+        in: path
+        required: true
+        schema:
+          type: string
+    
+    get:
+      summary: Get template details
+      description: Retrieve a specific notification template
+      operationId: getTemplate
+      tags:
+        - Templates
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationTemplate'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      summary: Update template
+      description: Update an existing notification template
+      operationId: updateTemplate
+      tags:
+        - Templates
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTemplateRequest'
+      responses:
+        '200':
+          description: Template updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationTemplate'
+
+  /notifications/preferences/{userId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    
+    get:
+      summary: Get user preferences
+      description: Retrieve notification preferences for a user
+      operationId: getUserPreferences
+      tags:
+        - Preferences
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreferences'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      summary: Update user preferences
+      description: Update notification preferences for a user
+      operationId: updateUserPreferences
+      tags:
+        - Preferences
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePreferencesRequest'
+      responses:
+        '200':
+          description: Preferences updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreferences'
+
+  /notifications/history:
+    get:
+      summary: Get notification history
+      description: Retrieve sent notification history
+      operationId: getNotificationHistory
+      tags:
+        - History
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: channel
+          in: query
+          schema:
+            type: string
+            enum: [email, sms, push, in_app]
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [sent, delivered, failed, bounced, opened, clicked]
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notifications:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NotificationHistory'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /notifications/webhooks/events:
+    post:
+      summary: Handle webhook events
+      description: Receive webhook events from notification providers
+      operationId: handleWebhookEvent
+      tags:
+        - Webhooks
+      parameters:
+        - name: X-Provider-Signature
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookEvent'
+      responses:
+        '200':
+          description: Event processed successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+components:
+  schemas:
+    SendNotificationRequest:
+      type: object
+      required:
+        - recipient
+        - channel
+        - content
+      properties:
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        channel:
+          type: string
+          enum: [email, sms, push, in_app]
+        template_id:
+          type: string
+        content:
+          $ref: '#/components/schemas/NotificationContent'
+        data:
+          type: object
+          description: Template variables and additional data
+        priority:
+          type: string
+          enum: [low, normal, high, urgent]
+          default: normal
+        schedule_at:
+          type: string
+          format: date-time
+          description: Schedule notification for future delivery
+    
+    BatchNotificationRequest:
+      type: object
+      required:
+        - recipients
+        - channel
+        - content
+      properties:
+        recipients:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipient'
+          minItems: 1
+          maxItems: 1000
+        channel:
+          type: string
+          enum: [email, sms, push, in_app]
+        template_id:
+          type: string
+        content:
+          $ref: '#/components/schemas/NotificationContent'
+        batch_name:
+          type: string
+        priority:
+          type: string
+          enum: [low, normal, high]
+          default: normal
+    
+    Recipient:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        device_tokens:
+          type: array
+          items:
+            type: string
+        locale:
+          type: string
+          default: en
+    
+    NotificationContent:
+      type: object
+      properties:
+        subject:
+          type: string
+          description: Email subject or push notification title
+        body:
+          type: string
+          description: Main content of the notification
+        html:
+          type: string
+          description: HTML content for email
+        action:
+          type: object
+          properties:
+            label:
+              type: string
+            url:
+              type: string
+              format: uri
+        metadata:
+          type: object
+          description: Additional metadata for tracking
+    
+    NotificationResponse:
+      type: object
+      properties:
+        notification_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [sent, queued, failed]
+        channel:
+          type: string
+        recipient_id:
+          type: string
+          format: uuid
+        sent_at:
+          type: string
+          format: date-time
+        provider_response:
+          type: object
+    
+    BatchNotificationResponse:
+      type: object
+      properties:
+        batch_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [processing, completed, failed]
+        total_recipients:
+          type: integer
+        queued:
+          type: integer
+        failed:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+    
+    NotificationTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        channel:
+          type: string
+          enum: [email, sms, push, in_app]
+        category:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+        html:
+          type: string
+        variables:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+              required:
+                type: boolean
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    
+    CreateTemplateRequest:
+      type: object
+      required:
+        - name
+        - channel
+        - category
+        - body
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        channel:
+          type: string
+          enum: [email, sms, push, in_app]
+        category:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+        html:
+          type: string
+        variables:
+          type: array
+          items:
+            type: object
+    
+    UpdateTemplateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+        html:
+          type: string
+        is_active:
+          type: boolean
+    
+    UserPreferences:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        channels:
+          type: object
+          properties:
+            email:
+              $ref: '#/components/schemas/ChannelPreference'
+            sms:
+              $ref: '#/components/schemas/ChannelPreference'
+            push:
+              $ref: '#/components/schemas/ChannelPreference'
+            in_app:
+              $ref: '#/components/schemas/ChannelPreference'
+        categories:
+          type: object
+          additionalProperties:
+            type: boolean
+        quiet_hours:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            start:
+              type: string
+              pattern: '^([01]?[0-9]|2[0-3]):[0-5][0-9]$'
+            end:
+              type: string
+              pattern: '^([01]?[0-9]|2[0-3]):[0-5][0-9]$'
+            timezone:
+              type: string
+    
+    ChannelPreference:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        frequency:
+          type: string
+          enum: [immediate, daily_digest, weekly_digest]
+    
+    UpdatePreferencesRequest:
+      type: object
+      properties:
+        channels:
+          type: object
+        categories:
+          type: object
+        quiet_hours:
+          type: object
+    
+    NotificationHistory:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        recipient_id:
+          type: string
+          format: uuid
+        channel:
+          type: string
+        template_id:
+          type: string
+        subject:
+          type: string
+        status:
+          type: string
+          enum: [sent, delivered, failed, bounced, opened, clicked]
+        sent_at:
+          type: string
+          format: date-time
+        delivered_at:
+          type: string
+          format: date-time
+        opened_at:
+          type: string
+          format: date-time
+        clicked_at:
+          type: string
+          format: date-time
+        error_message:
+          type: string
+    
+    WebhookEvent:
+      type: object
+      properties:
+        provider:
+          type: string
+          enum: [sendgrid, twilio, firebase, onesignal]
+        event_type:
+          type: string
+        notification_id:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        data:
+          type: object
+    
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        total_pages:
+          type: integer
+    
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+  
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    RateLimited:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+        X-RateLimit-Reset:
+          schema:
+            type: integer
+  
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

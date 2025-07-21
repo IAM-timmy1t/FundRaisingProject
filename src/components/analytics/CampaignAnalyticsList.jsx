@@ -10,7 +10,7 @@ import {
   Calendar, Target, ArrowRight, Plus
 } from 'lucide-react';
 import analyticsService from '../../services/analyticsService';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/EnhancedAuthContext';
 import { format } from 'date-fns';
 import { toast } from 'react-hot-toast';
 

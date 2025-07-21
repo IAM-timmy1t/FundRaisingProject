@@ -1,223 +1,237 @@
 # Identity Verification Process
 
-## Why Verification Matters
+Verifying your identity on Blessed Horizon helps build trust with potential donors and unlocks additional features for your campaigns.
 
-Identity verification helps build trust between campaign creators and donors. Verified accounts receive:
+## Why Verify Your Identity?
 
-- ✅ **Verified Badge** on your profile and campaigns
-- 📈 **Higher visibility** in search results
-- 💰 **Increased donation rates** (up to 3x more)
-- 🚀 **Access to premium features**
-- 💳 **Faster fund withdrawals**
+### Benefits of Verification:
+- ✅ **Verified Badge**: Display a trust badge on your profile and campaigns
+- 💰 **Higher Donation Limits**: Increase your campaign funding limits
+- 🌟 **Featured Campaigns**: Eligible for homepage features and promotions
+- 📊 **Advanced Analytics**: Access detailed donor insights
+- 🏆 **Priority Support**: Get faster response times from our team
+- 💳 **Faster Withdrawals**: Reduced payment processing times
 
 ## Verification Levels
 
-### Level 1: Basic Verification (Email)
-**Status**: Automatically completed at signup
-- Email address confirmed
+### Level 1: Email Verification (Required)
+- Completed during registration
+- Confirms email ownership
 - Basic platform access
-- Can create campaigns up to $5,000
 
 ### Level 2: Identity Verification
-**Requirements**:
-- Government-issued photo ID
-- Selfie for identity matching
-- Phone number verification
+- Government-issued ID required
+- Selfie verification
+- Unlocks most features
 
-**Benefits**:
-- Verified badge on profile
-- Campaign limits increased to $50,000
-- Priority customer support
+### Level 3: Enhanced Verification (Organizations)
+- Business registration documents
+- Tax-exempt status (if applicable)
+- Bank account verification
+- Full platform features
 
-### Level 3: Enhanced Verification
-**Requirements**:
-- Proof of address (utility bill, bank statement)
-- Social media account linking
-- Video verification call (for campaigns over $25,000)
-
-**Benefits**:
-- Premium verified badge
-- No campaign limits
-- Featured campaign eligibility
-- Dedicated account manager
-
-## Step-by-Step Verification Guide
+## Step-by-Step Verification Process
 
 ### Step 1: Access Verification Center
 
 1. Log in to your account
-2. Navigate to **Settings** → **Verification**
-3. Click **"Start Verification"**
+2. Click on your profile picture
+3. Select **"Verification Center"**
+4. Or go directly to **Settings** > **Verification**
 
-### Step 2: Upload Your ID
+### Step 2: Choose Verification Type
 
-**Accepted Documents**:
-- Driver's License
-- Passport
-- National ID Card
-- Military ID
+#### For Individuals:
+1. Click **"Verify Identity"**
+2. Have ready:
+   - Government-issued photo ID
+   - Good lighting for selfie
+   - Stable internet connection
 
-**Photo Requirements**:
-- Clear, color photo
-- All four corners visible
+#### For Organizations:
+1. Click **"Verify Organization"**
+2. Prepare these documents:
+   - Business registration certificate
+   - Tax ID or EIN documentation
+   - Proof of nonprofit status (if applicable)
+   - Bank statement (last 3 months)
+
+### Step 3: Submit Identity Documents
+
+#### Accepted Documents:
+- **Primary ID** (choose one):
+  - Passport
+  - Driver's license
+  - National ID card
+  - State-issued ID
+
+#### Document Requirements:
+- Must be valid (not expired)
+- Full color images
+- All corners visible
+- Clear and readable text
 - No glare or shadows
-- Text must be readable
-- File size under 10MB
-- Formats: JPG, PNG, PDF
 
-### Step 3: Take a Selfie
+#### How to Take Good Photos:
+1. Place document on flat surface
+2. Use good lighting (natural light preferred)
+3. Avoid shadows and glare
+4. Ensure all text is readable
+5. Include all four corners
 
-**Selfie Guidelines**:
-1. Good lighting (face the light source)
-2. Remove glasses and hats
-3. Neutral expression
-4. Look directly at camera
-5. Ensure face fills the frame
-6. Match the photo on your ID
+### Step 4: Complete Selfie Verification
 
-### Step 4: Verify Phone Number
+1. **Position your face** in the oval guide
+2. **Follow the prompts**:
+   - Look straight ahead
+   - Turn head slowly left
+   - Turn head slowly right
+   - Smile
+3. **Ensure**:
+   - Good lighting on your face
+   - No glasses or hat (if possible)
+   - Clear background
+   - Match the person in ID photo
 
-1. Enter your mobile number
-2. Receive SMS verification code
-3. Enter code within 10 minutes
-4. Phone becomes recovery method
+### Step 5: Organization-Specific Requirements
 
-### Step 5: Additional Verification (if required)
+#### Submit Business Documents:
+1. **Registration Documents**:
+   - Articles of incorporation
+   - Business license
+   - Operating agreement
 
-**Proof of Address**:
-- Recent utility bill (within 3 months)
-- Bank statement
-- Lease agreement
-- Government correspondence
+2. **Tax Documentation**:
+   - 501(c)(3) determination letter (US nonprofits)
+   - Tax-exempt certificate
+   - Recent tax returns (may be required)
 
-**Requirements**:
-- Your name clearly visible
-- Full address matching profile
-- Date within last 90 days
+3. **Bank Verification**:
+   - Business bank statement
+   - Must show organization name
+   - Recent (within 90 days)
 
-## Organization Verification
+### Step 6: Wait for Review
 
-### Additional Requirements:
+- **Typical review time**: 24-48 hours
+- **Complex cases**: Up to 5 business days
+- **You'll receive email updates** at each stage
+- **Check status** in Verification Center
 
-1. **Legal Documentation**:
-   - Articles of Incorporation
-   - IRS 501(c)(3) determination letter (US)
-   - Charity registration (international)
+## Verification Status
 
-2. **Financial Information**:
-   - EIN/Tax ID number
-   - Bank account in organization's name
-   - Recent financial statement
-
-3. **Authorized Representative**:
-   - Board resolution or authorization letter
-   - Representative's personal ID
-   - Proof of association with organization
-
-## Verification Timeline
-
-- **Basic ID Verification**: 5-10 minutes (automated)
-- **Manual Review**: 1-2 business days
-- **Organization Verification**: 3-5 business days
-- **Enhanced Verification**: 5-7 business days
+### Status Indicators:
+- 🔵 **Pending**: Under review
+- ✅ **Verified**: Successfully completed
+- ⚠️ **Additional Info Needed**: Check email for requirements
+- ❌ **Rejected**: See reason and resubmit
 
 ## Common Verification Issues
 
-### ID Rejection Reasons:
+### Document Rejected?
 
-**"Photo quality too low"**
-- Ensure good lighting
-- Use original document (not photocopy)
-- Clean camera lens
-- Avoid motion blur
+**Common reasons**:
+- Blurry or unreadable images
+- Document expired
+- Information doesn't match account
+- Missing pages or sections
+- Wrong document type
 
-**"Information doesn't match"**
-- Check name spelling matches exactly
-- Update profile if name has changed
-- Ensure address is current
+**Solutions**:
+1. Retake photos with better lighting
+2. Update expired documents
+3. Ensure account info matches ID exactly
+4. Submit all required pages
+5. Check accepted document list
 
-**"Document expired"**
-- Only valid, non-expired IDs accepted
-- Renew document before uploading
+### Selfie Verification Failed?
 
-**"Selfie doesn't match ID"**
-- Remove accessories
-- Ensure neutral expression
-- Try better lighting
-- Face camera directly
+**Common reasons**:
+- Poor lighting
+- Face partially obscured
+- Doesn't match ID photo
+- Technical issues
+
+**Solutions**:
+1. Use natural daylight
+2. Remove accessories blocking face
+3. Ensure you match your ID photo
+4. Try different device/browser
 
 ## Privacy and Security
 
 ### How We Protect Your Information:
-
-- 🔒 **256-bit encryption** for all documents
-- 🏦 **Bank-level security** standards
-- 🚫 **No sharing** with third parties
-- 🔄 **Automatic deletion** after verification
-- 👁️ **Limited access** to verification team only
+- 🔒 **Encryption**: All documents encrypted in transit and storage
+- 🛡️ **Secure Partners**: We use trusted verification services
+- 🗑️ **Data Deletion**: Documents deleted after verification
+- 👁️ **Limited Access**: Only authorized staff can view
+- 📜 **Compliance**: GDPR and privacy law compliant
 
 ### Your Rights:
-- Request data deletion after verification
-- Access your submitted documents
-- Know who has viewed your information
-- Opt-out of additional verification levels
-
-## Tips for Quick Approval
-
-1. **Prepare Documents in Advance**
-   - Have all documents ready
-   - Ensure they meet requirements
-   - Check expiration dates
-
-2. **Use Good Equipment**
-   - Modern smartphone camera
-   - Stable internet connection
-   - Well-lit environment
-
-3. **Double-Check Information**
-   - Name spelling
-   - Address accuracy
-   - Date of birth
-   - Document validity
-
-4. **Follow Instructions Carefully**
-   - Read each step thoroughly
-   - Don't skip requirements
-   - Ask for help if needed
+- Request copy of submitted documents
+- Ask for data deletion (may affect account)
+- Know how your data is used
+- Report any concerns to privacy@blessedhorizon.org
 
 ## After Verification
 
 ### What Happens Next:
-
-1. **Confirmation Email** sent immediately
-2. **Verified Badge** appears on profile
-3. **Enhanced Features** automatically activated
-4. **Welcome Package** with tips and resources
+1. **Verified Badge** appears on your profile
+2. **Email confirmation** sent
+3. **Features unlocked** immediately
+4. **Higher limits** applied to campaigns
+5. **Certificate available** for download (organizations)
 
 ### Maintaining Verified Status:
-
 - Keep information updated
 - Respond to periodic reviews
-- Maintain platform guidelines
-- Report any account changes
+- Maintain good standing
+- Follow platform guidelines
 
-## Verification Support
+## Verification for Different Countries
 
-### Need Help?
+### United States:
+- SSN not required for basic verification
+- EIN required for organizations
+- State-specific IDs accepted
 
-**Verification Support Team**:
-- 📧 Email: verification@blessedhorizon.org
-- 💬 Priority Live Chat for verification issues
-- 📞 Dedicated hotline: 1-800-VERIFY-1
-- 🕐 Available Monday-Friday, 9 AM - 6 PM EST
+### European Union:
+- GDPR-compliant process
+- National IDs accepted
+- VAT number for organizations
 
-### Resources:
-- [Video Tutorial: Verification Process](https://help.blessedhorizon.org/verification-video)
-- [FAQ: Common Verification Questions](../faq/verification-faq.md)
-- [Download: Verification Checklist PDF](https://blessedhorizon.org/verification-checklist.pdf)
+### Other Countries:
+- Check country-specific requirements
+- Contact support for guidance
+- Some features may be limited
+
+## Troubleshooting
+
+### Verification Taking Too Long?
+- Check spam folder for emails
+- Ensure all documents submitted
+- Contact support after 5 business days
+
+### Need to Update Information?
+1. Go to Verification Center
+2. Click "Update Information"
+3. Submit new documents
+4. Await re-verification
+
+## Support
+
+### Get Help With Verification:
+- 📧 **Email**: verification@blessedhorizon.org
+- 💬 **Live Chat**: Priority for verification issues
+- 📞 **Phone**: 1-800-BLESSED (business hours)
+- 🎫 **Support Ticket**: Average response 24 hours
+
+### Before Contacting Support:
+1. Check verification status
+2. Review rejection reasons
+3. Try resubmitting documents
+4. Have your case number ready
 
 ---
 
-*Your privacy is our priority. All verification data is handled in compliance with GDPR, CCPA, and international privacy laws.*
-
-*Last updated: January 2025*
+*Last updated: December 2024*

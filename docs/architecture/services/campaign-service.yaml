@@ -1,0 +1,554 @@
+openapi: 3.0.0
+info:
+  title: Campaign Service API
+  version: 1.0.0
+  description: Microservice for managing fundraising campaigns
+  contact:
+    name: Blessed Horizon API Support
+    email: api-support@blessedhorizon.org
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.blessedhorizon.org/v1/campaigns
+    description: Production server
+  - url: https://staging-api.blessedhorizon.org/v1/campaigns
+    description: Staging server
+  - url: http://localhost:3001
+    description: Development server
+
+paths:
+  /campaigns:
+    get:
+      summary: List all campaigns
+      description: Retrieve a paginated list of campaigns with filtering and sorting options
+      operationId: listCampaigns
+      tags:
+        - Campaigns
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, pending, completed, suspended]
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum: [medical, education, disaster, community, other]
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            enum: [created_at, goal_amount, raised_amount, end_date]
+        - name: sortOrder
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  campaigns:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Campaign'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    
+    post:
+      summary: Create a new campaign
+      description: Create a new fundraising campaign
+      operationId: createCampaign
+      tags:
+        - Campaigns
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCampaignRequest'
+      responses:
+        '201':
+          description: Campaign created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /campaigns/{campaignId}:
+    parameters:
+      - name: campaignId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    
+    get:
+      summary: Get campaign details
+      description: Retrieve detailed information about a specific campaign
+      operationId: getCampaign
+      tags:
+        - Campaigns
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignDetails'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      summary: Update campaign
+      description: Update campaign details
+      operationId: updateCampaign
+      tags:
+        - Campaigns
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCampaignRequest'
+      responses:
+        '200':
+          description: Campaign updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    delete:
+      summary: Delete campaign
+      description: Soft delete a campaign
+      operationId: deleteCampaign
+      tags:
+        - Campaigns
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Campaign deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /campaigns/{campaignId}/updates:
+    parameters:
+      - name: campaignId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    
+    get:
+      summary: Get campaign updates
+      description: Retrieve all updates for a campaign
+      operationId: getCampaignUpdates
+      tags:
+        - Campaign Updates
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updates:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CampaignUpdate'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    
+    post:
+      summary: Post campaign update
+      description: Create a new update for a campaign
+      operationId: createCampaignUpdate
+      tags:
+        - Campaign Updates
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateRequest'
+      responses:
+        '201':
+          description: Update created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignUpdate'
+
+  /campaigns/{campaignId}/media:
+    parameters:
+      - name: campaignId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    
+    post:
+      summary: Upload campaign media
+      description: Upload images or videos for a campaign
+      operationId: uploadCampaignMedia
+      tags:
+        - Campaign Media
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                type:
+                  type: string
+                  enum: [image, video]
+                caption:
+                  type: string
+      responses:
+        '201':
+          description: Media uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaItem'
+
+components:
+  schemas:
+    Campaign:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+          enum: [medical, education, disaster, community, other]
+        goal_amount:
+          type: number
+          format: decimal
+        raised_amount:
+          type: number
+          format: decimal
+        currency:
+          type: string
+          default: USD
+        status:
+          type: string
+          enum: [active, pending, completed, suspended]
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        beneficiary_name:
+          type: string
+        creator_id:
+          type: string
+          format: uuid
+        trust_score:
+          type: number
+          minimum: 0
+          maximum: 100
+        donor_count:
+          type: integer
+        media_count:
+          type: integer
+        update_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    
+    CampaignDetails:
+      allOf:
+        - $ref: '#/components/schemas/Campaign'
+        - type: object
+          properties:
+            beneficiary_details:
+              type: object
+              properties:
+                story:
+                  type: string
+                location:
+                  type: string
+                documents_verified:
+                  type: boolean
+            media:
+              type: array
+              items:
+                $ref: '#/components/schemas/MediaItem'
+            recent_donations:
+              type: array
+              items:
+                $ref: '#/components/schemas/DonationSummary'
+            milestones:
+              type: array
+              items:
+                $ref: '#/components/schemas/Milestone'
+    
+    CreateCampaignRequest:
+      type: object
+      required:
+        - title
+        - description
+        - category
+        - goal_amount
+        - end_date
+        - beneficiary_name
+      properties:
+        title:
+          type: string
+          minLength: 10
+          maxLength: 100
+        description:
+          type: string
+          minLength: 50
+          maxLength: 5000
+        category:
+          type: string
+          enum: [medical, education, disaster, community, other]
+        goal_amount:
+          type: number
+          minimum: 100
+          maximum: 1000000
+        end_date:
+          type: string
+          format: date
+        beneficiary_name:
+          type: string
+        beneficiary_story:
+          type: string
+        beneficiary_location:
+          type: string
+        documents:
+          type: array
+          items:
+            type: string
+            format: uri
+    
+    UpdateCampaignRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        goal_amount:
+          type: number
+        end_date:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [active, suspended]
+    
+    CampaignUpdate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        campaign_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        content:
+          type: string
+        media:
+          type: array
+          items:
+            $ref: '#/components/schemas/MediaItem'
+        created_at:
+          type: string
+          format: date-time
+    
+    CreateUpdateRequest:
+      type: object
+      required:
+        - title
+        - content
+      properties:
+        title:
+          type: string
+          maxLength: 100
+        content:
+          type: string
+          maxLength: 2000
+    
+    MediaItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string
+          format: uri
+        type:
+          type: string
+          enum: [image, video]
+        caption:
+          type: string
+        thumbnail_url:
+          type: string
+          format: uri
+        created_at:
+          type: string
+          format: date-time
+    
+    DonationSummary:
+      type: object
+      properties:
+        amount:
+          type: number
+        currency:
+          type: string
+        donor_name:
+          type: string
+        is_anonymous:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+    
+    Milestone:
+      type: object
+      properties:
+        amount:
+          type: number
+        description:
+          type: string
+        reached_at:
+          type: string
+          format: date-time
+    
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        total_pages:
+          type: integer
+    
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+  
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

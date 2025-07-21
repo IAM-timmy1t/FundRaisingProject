@@ -1,0 +1,88 @@
+{
+  "app": {
+    "name": "Blessed-Horizon",
+    "title": "Blessed-Horizon - Financement Participatif Basé sur la Foi",
+    "description": "Rejoignez notre plateforme de financement participatif basée sur la foi qui garantit la transparence et la responsabilité grâce au scoring de confiance, aux portefeuilles séquestres et aux mises à jour de progrès obligatoires.",
+    "watermark": "Blessed-Horizon"
+  },
+  "header": {
+    "login": "Connexion",
+    "signUp": "S'inscrire",
+    "loginForMessages": "Veuillez vous connecter pour voir les messages",
+    "loginForMessagesDesc": "Vous avez besoin d'un compte pour voir vos messages."
+  },
+  "home": {
+    "title": "Histoires d'",
+    "titleHighlight": "Espoir",
+    "subtitle": "Connectez-vous avec une communauté mondiale qui se soucie. Partagez votre histoire, cherchez du soutien et aidez les autres à surmonter ensemble les défis financiers.",
+    "shareStory": "Partager Votre Histoire",
+    "joinToShare": "Rejoignez pour Partager Votre Histoire",
+    "searchPlaceholder": "Rechercher des histoires, des noms ou des lieux...",
+    "noStoriesTitle": "Pas Encore d'Histoires",
+    "noStoriesDesc": "Soyez le premier à partager une histoire et à inspirer notre communauté!",
+    "noMatch": "Aucune histoire trouvée correspondant à vos critères de recherche."
+  },
+  "categories": {
+    "all": "Toutes les Catégories",
+    "medical": "Médical",
+    "education": "Éducation",
+    "housing": "Logement",
+    "emergency": "Urgence",
+    "business": "Entreprise"
+  },
+  "story": {
+    "urgent": "Urgent",
+    "raised": "Collecté",
+    "goal": "Objectif",
+    "supportersCount": "{{count}} supporteur",
+    "supportersCount_plural": "{{count}} supporteurs",
+    "funded": "{{progress}}% financé",
+    "support": "Soutenir Cette Histoire",
+    "loginRequiredTitle": "Veuillez d'abord vous connecter!",
+    "loginRequiredDesc": "Vous avez besoin d'un compte pour partager une histoire.",
+    "shareSuccessTitle": "Votre histoire a été partagée! 💙",
+    "shareSuccessDesc": "Votre histoire est maintenant en ligne et les gens peuvent commencer à vous soutenir."
+  },
+  "payment": {
+    "helmetTitle": "Faire un don à {{storyTitle}} | Blessed-Horizon",
+    "helmetDesc": "Soutenez {{storyName}} en faisant un don sécurisé.",
+    "backToStories": "Retour aux Histoires",
+    "title": "Don Sécurisé",
+    "supporting": "Vous soutenez \"{{storyTitle}}\"",
+    "progressTitle": "Progrès de la Campagne",
+    "formTitle": "Entrez Vos Détails de Don",
+    "amountLabel": "Montant du Don ({{currency}})",
+    "exchangeRate": "1 USD ≈ {{rate}} {{code}}",
+    "cardName": "Nom sur la Carte",
+    "cardNumber": "Numéro de Carte",
+    "expiry": "MM / AA",
+    "cvc": "CVC",
+    "donateButton": "Donner {{amount}}",
+    "invalidAmountTitle": "Montant Invalide",
+    "invalidAmountDesc": "Veuillez entrer un montant de don valide.",
+    "incompleteFormTitle": "Formulaire Incomplet",
+    "incompleteFormDesc": "Veuillez remplir tous les détails de paiement."
+  },
+  "donation": {
+    "successTitle": "Merci pour votre don! 🙏",
+    "successDesc": "Votre don fera une vraie différence dans la vie de quelqu'un."
+  },
+  "auth": {
+    "loginSuccessTitle": "Bon retour, {{name}}!",
+    "loginSuccessDesc": "Vous vous êtes connecté avec succès.",
+    "loginFailTitle": "Échec de la Connexion",
+    "loginFailDesc": "Email ou mot de passe invalide. Veuillez réessayer.",
+    "accountExistsTitle": "Le Compte Existe",
+    "accountExistsDesc": "Un compte avec cet email existe déjà. Veuillez vous connecter.",
+    "welcomeTitle": "Bienvenue sur Blessed-Horizon! 🎉",
+    "welcomeDesc": "Votre compte a été créé avec succès.",
+    "logoutTitle": "Vous avez été déconnecté.",
+    "logoutDesc": "Nous espérons vous revoir bientôt!"
+  },
+  "community": {
+    "loginRequiredTitle": "Veuillez d'abord vous connecter!",
+    "loginRequiredDesc": "Vous avez besoin d'un compte pour publier.",
+    "postSuccessTitle": "Message Publié! 💬",
+    "postSuccessDesc": "Votre message est maintenant en ligne dans le hub communautaire."
+  }
+}

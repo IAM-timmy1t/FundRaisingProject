@@ -6,6 +6,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu.jsx";
 import MobileHeader from './MobileHeader';
+import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
 
 const logoUrl = "https://storage.googleapis.com/hostinger-horizons-assets-prod/05bb7280-8f3e-44fe-afa6-945be0a5b5c7/d2a60dec2aa785b2ec9d10ea4c13dab1.png";
 
@@ -59,6 +60,7 @@ const Header = ({ user, onLoginClick, onLogout, onDonateClick }) => {
           </div>
           
           <div className="flex-1 flex items-center justify-end space-x-2 md:space-x-4">
+            <LanguageSwitcher />
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

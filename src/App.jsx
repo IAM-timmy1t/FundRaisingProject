@@ -16,11 +16,11 @@ import ResetPasswordPage from './components/auth/ResetPasswordPage';
 
 // Dashboard pages
 import Dashboard from './components/dashboard/Dashboard';
-import ProfilePage from './components/profile/ProfilePage';
-import CampaignListPage from './components/views/CampaignListPage';
+import ProfilePage from './components/views/ProfilePage';
+import CampaignListPage from './components/campaigns/CampaignListingPage'; // Fixed: was CampaignListPage, should be CampaignListingPage
 import CampaignDetailPageRealtime from './components/views/CampaignDetailPageRealtime';
-import CreateCampaignPage from './components/campaigns/CreateCampaignPage';
-import PaymentSuccessPage from './components/payment/PaymentSuccessPage';
+import CreateCampaignPage from './components/campaigns/CampaignCreationWizard'; // Already fixed
+import PaymentSuccessPage from './components/views/PaymentSuccessPage'; // Changed to views folder
 import PaymentCancelPage from './components/payment/PaymentCancelPage';
 import NotificationPreferences from './components/notifications/NotificationPreferences';
 import NotificationsPage from './components/notifications/NotificationsPage';
@@ -38,10 +38,15 @@ import CookiePolicy from './components/gdpr/CookiePolicy';
 import UserRightsManagement from './components/gdpr/UserRightsManagement';
 
 // Landing page
-import LandingPage from './components/landing/LandingPage';
+import LandingPage from './components/views/HomeView'; // Already fixed
 
 // Developer Portal
 import DeveloperPortal from './components/views/DeveloperPortal';
+
+// Help & Support
+import HelpCenter from './components/help/HelpCenter';
+import FAQ from './components/help/FAQ';
+import ContactSupport from './components/help/ContactSupport';
 
 function App() {
   useEffect(() => {
@@ -66,6 +71,9 @@ function App() {
         <Route path="/privacy-policy" element={<GDPRPrivacyPolicy />} />
         <Route path="/cookie-policy" element={<CookiePolicy />} />
         <Route path="/developers" element={<DeveloperPortal />} />
+        <Route path="/help" element={<HelpCenter />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/contact" element={<ContactSupport />} />
         
         {/* Auth routes */}
         <Route element={<AuthLayout />}>
@@ -109,3 +117,5 @@ function App() {
 }
 
 export default App;
+
+
