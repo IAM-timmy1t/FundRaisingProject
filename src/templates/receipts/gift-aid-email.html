@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Aid Receipt - {{receiptNumber}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #2c5aa0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 0 0 5px 5px;
+        }
+        .receipt-box {
+            background-color: white;
+            border: 2px solid #2c5aa0;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .amount {
+            font-size: 24px;
+            color: #2c5aa0;
+            font-weight: bold;
+        }
+        .gift-aid-box {
+            background-color: #f0f8ff;
+            border: 2px solid #4169e1;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .gift-aid-amount {
+            font-size: 18px;
+            color: #4169e1;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 12px;
+            color: #666;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2c5aa0;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .info-box {
+            background-color: #ffe4b5;
+            padding: 15px;
+            border-left: 4px solid #ff8c00;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Blessed Horizon Foundation</h1>
+        <p>Gift Aid Donation Receipt</p>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{donorName}},</p>
+        
+        <p>Thank you for your generous donation to Blessed Horizon Foundation. This email confirms your Gift Aid donation and serves as your official receipt.</p>
+        
+        <div class="receipt-box">
+            <h2>Donation Details</h2>
+            <p><strong>Receipt Reference:</strong> {{receiptNumber}}</p>
+            <p><strong>Date of Donation:</strong> {{donationDate}}</p>
+            <p><strong>Donation Amount:</strong> <span class="amount">£{{amount}}</span></p>
+            <p><strong>Campaign:</strong> {{campaignTitle}}</p>
+            <p><strong>Payment Method:</strong> {{paymentMethod}}</p>
+        </div>
+        
+        <div class="gift-aid-box">
+            <h2>Gift Aid Declaration</h2>
+            <p>You have confirmed that you are a UK taxpayer and understand that if you pay less Income Tax and/or Capital Gains Tax than the amount of Gift Aid claimed on all your donations in the tax year, it is your responsibility to pay any difference.</p>
+            
+            <p><strong>Gift Aid Claimed:</strong> <span class="gift-aid-amount">£{{giftAidAmount}}</span></p>
+            
+            <p>This means your donation of £{{amount}} is worth £{{totalWithGiftAid}} to Blessed Horizon Foundation at no extra cost to you!</p>
+        </div>
+        
+        <div class="info-box">
+            <h3>Important Information</h3>
+            <ul>
+                <li>Please notify us if you want to cancel this declaration</li>
+                <li>Please notify us if you change your name or home address</li>
+                <li>Please notify us if you no longer pay sufficient tax on your income and/or capital gains</li>
+            </ul>
+        </div>
+        
+        <p>You can download a PDF copy of your receipt:</p>
+        <p style="text-align: center;">
+            <a href="{{receiptUrl}}" class="button">Download PDF Receipt</a>
+        </p>
+        
+        <p>You can verify your receipt at any time by visiting:</p>
+        <p style="text-align: center;">
+            <a href="{{verificationUrl}}">{{verificationUrl}}</a>
+        </p>
+        
+        <p>Your support helps us continue our charitable work. Thank you for making a difference!</p>
+        
+        <p>With gratitude,<br>
+        The Blessed Horizon Team</p>
+    </div>
+    
+    <div class="footer">
+        <p>Blessed Horizon Foundation<br>
+        Registered Charity No. 123456<br>
+        123 Faith Street, Blessing, CA 90210<br>
+        Email: giftaid@blessed-horizon.org | Phone: +44 20 1234 5678<br>
+        <a href="https://blessed-horizon.org">www.blessed-horizon.org</a></p>
+        
+        <p>This is an automated email. Please do not reply directly to this message.<br>
+        For questions about Gift Aid, please contact giftaid@blessed-horizon.org</p>
+        
+        <p>Gift Aid is reclaimed by the charity from the tax you pay for the current tax year.</p>
+    </div>
+</body>
+</html>

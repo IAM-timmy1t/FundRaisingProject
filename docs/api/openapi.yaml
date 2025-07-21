@@ -1,0 +1,966 @@
+openapi: 3.0.3
+info:
+  title: Blessed Horizon API
+  description: |
+    Faith-based transparent crowdfunding platform API documentation.
+    
+    ## Overview
+    The Blessed Horizon API provides programmatic access to campaign management, 
+    donations, user profiles, and platform analytics.
+    
+    ## Authentication
+    All API requests require authentication using Supabase JWT tokens.
+    Include the token in the Authorization header:
+    ```
+    Authorization: Bearer YOUR_JWT_TOKEN
+    ```
+    
+    ## Rate Limiting
+    - Anonymous: 100 requests/hour
+    - Authenticated: 1000 requests/hour
+    - Premium: 10000 requests/hour
+    
+    ## Environments
+    - Production: https://api.blessed-horizon.com
+    - Staging: https://staging-api.blessed-horizon.com
+    - Development: http://localhost:3000
+  version: 1.0.0
+  contact:
+    name: Blessed Horizon Support
+    email: support@blessed-horizon.com
+    url: https://blessed-horizon.com/support
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: https://api.blessed-horizon.com
+    description: Production server
+  - url: https://staging-api.blessed-horizon.com
+    description: Staging server
+  - url: http://localhost:3000
+    description: Development server
+security:
+  - BearerAuth: []
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Campaigns
+    description: Campaign management operations
+  - name: Donations
+    description: Donation and payment operations
+  - name: Users
+    description: User profile management
+  - name: Analytics
+    description: Platform and campaign analytics
+  - name: Notifications
+    description: Notification management
+  - name: Admin
+    description: Administrative operations
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register new user
+      description: Create a new user account with email and password
+      operationId: registerUser
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - full_name
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: SecurePass123!
+                full_name:
+                  type: string
+                  example: John Doe
+                role:
+                  type: string
+                  enum: [donor, recipient, admin]
+                  default: donor
+                phone:
+                  type: string
+                  example: +1234567890
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login user
+      description: Authenticate user with email and password
+      operationId: loginUser
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout user
+      description: Invalidate current session
+      operationId: logoutUser
+      responses:
+        '204':
+          description: Logout successful
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  
+  /campaigns:
+    get:
+      tags:
+        - Campaigns
+      summary: List campaigns
+      description: Get paginated list of campaigns with filtering options
+      operationId: listCampaigns
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - $ref: '#/components/parameters/SortParam'
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, completed, cancelled, pending]
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum: [medical, education, emergency, community, disaster_relief, other]
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search in title and description
+        - name: min_amount
+          in: query
+          schema:
+            type: number
+        - name: max_amount
+          in: query
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Campaigns retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Campaign'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    
+    post:
+      tags:
+        - Campaigns
+      summary: Create campaign
+      description: Create a new fundraising campaign
+      operationId: createCampaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignCreate'
+      responses:
+        '201':
+          description: Campaign created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  
+  /campaigns/{id}:
+    get:
+      tags:
+        - Campaigns
+      summary: Get campaign
+      description: Get campaign details by ID
+      operationId: getCampaign
+      parameters:
+        - $ref: '#/components/parameters/CampaignId'
+        - name: include
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [updates, donations, analytics]
+          style: form
+          explode: false
+      responses:
+        '200':
+          description: Campaign retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignDetails'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      tags:
+        - Campaigns
+      summary: Update campaign
+      description: Update campaign details
+      operationId: updateCampaign
+      parameters:
+        - $ref: '#/components/parameters/CampaignId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignUpdate'
+      responses:
+        '200':
+          description: Campaign updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    delete:
+      tags:
+        - Campaigns
+      summary: Delete campaign
+      description: Cancel or delete a campaign
+      operationId: deleteCampaign
+      parameters:
+        - $ref: '#/components/parameters/CampaignId'
+      responses:
+        '204':
+          description: Campaign deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  
+  /campaigns/{id}/donate:
+    post:
+      tags:
+        - Donations
+      summary: Make donation
+      description: Create a donation for a campaign
+      operationId: createDonation
+      parameters:
+        - $ref: '#/components/parameters/CampaignId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+                - payment_method_id
+              properties:
+                amount:
+                  type: number
+                  minimum: 1
+                  example: 100
+                payment_method_id:
+                  type: string
+                  description: Stripe payment method ID
+                is_anonymous:
+                  type: boolean
+                  default: false
+                message:
+                  type: string
+                  maxLength: 500
+                cover_fees:
+                  type: boolean
+                  default: false
+                  description: Donor covers processing fees
+      responses:
+        '201':
+          description: Donation created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Donation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  
+  /users/profile:
+    get:
+      tags:
+        - Users
+      summary: Get current user profile
+      description: Get authenticated user's profile
+      operationId: getCurrentUserProfile
+      responses:
+        '200':
+          description: Profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    
+    put:
+      tags:
+        - Users
+      summary: Update user profile
+      description: Update authenticated user's profile
+      operationId: updateUserProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileUpdate'
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  
+  /analytics/campaigns/{id}:
+    get:
+      tags:
+        - Analytics
+      summary: Get campaign analytics
+      description: Get detailed analytics for a campaign
+      operationId: getCampaignAnalytics
+      parameters:
+        - $ref: '#/components/parameters/CampaignId'
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [day, week, month, year, all]
+            default: month
+        - name: metrics
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [donations, views, conversion, trust_score]
+          style: form
+          explode: false
+      responses:
+        '200':
+          description: Analytics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignAnalytics'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  
+  /notifications:
+    get:
+      tags:
+        - Notifications
+      summary: List notifications
+      description: Get user's notifications
+      operationId: listNotifications
+      parameters:
+        - name: unread_only
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Notifications retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Notification'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  
+  /admin/campaigns/moderate:
+    get:
+      tags:
+        - Admin
+      summary: Get moderation queue
+      description: Get campaigns pending moderation
+      operationId: getModerationQueue
+      security:
+        - BearerAuth: []
+        - AdminRole: []
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Moderation queue retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CampaignModeration'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    AdminRole:
+      type: apiKey
+      in: header
+      name: X-User-Role
+  
+  parameters:
+    CampaignId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    LimitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    SortParam:
+      name: sort
+      in: query
+      schema:
+        type: string
+        enum: [created_at, -created_at, amount_raised, -amount_raised, end_date, -end_date]
+        default: -created_at
+  
+  schemas:
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+    
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        session:
+          type: object
+          properties:
+            access_token:
+              type: string
+            refresh_token:
+              type: string
+            expires_at:
+              type: string
+              format: date-time
+    
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [donor, recipient, admin]
+        created_at:
+          type: string
+          format: date-time
+    
+    UserProfile:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+        bio:
+          type: string
+        avatar_url:
+          type: string
+          format: uri
+        phone:
+          type: string
+        location:
+          type: string
+        trust_score:
+          type: number
+          minimum: 0
+          maximum: 100
+        verification_status:
+          type: string
+          enum: [unverified, pending, verified]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    
+    UserProfileUpdate:
+      type: object
+      properties:
+        full_name:
+          type: string
+        bio:
+          type: string
+          maxLength: 500
+        avatar_url:
+          type: string
+          format: uri
+        phone:
+          type: string
+        location:
+          type: string
+    
+    Campaign:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        goal_amount:
+          type: number
+        amount_raised:
+          type: number
+        donor_count:
+          type: integer
+        category:
+          type: string
+          enum: [medical, education, emergency, community, disaster_relief, other]
+        status:
+          type: string
+          enum: [draft, pending, active, completed, cancelled]
+        recipient_id:
+          type: string
+          format: uuid
+        image_url:
+          type: string
+          format: uri
+        video_url:
+          type: string
+          format: uri
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    
+    CampaignCreate:
+      type: object
+      required:
+        - title
+        - description
+        - goal_amount
+        - category
+        - end_date
+      properties:
+        title:
+          type: string
+          minLength: 10
+          maxLength: 100
+        description:
+          type: string
+          minLength: 100
+          maxLength: 5000
+        story:
+          type: string
+          maxLength: 10000
+        scripture_reference:
+          type: string
+        goal_amount:
+          type: number
+          minimum: 100
+        category:
+          type: string
+          enum: [medical, education, emergency, community, disaster_relief, other]
+        budget_breakdown:
+          type: array
+          items:
+            type: object
+            properties:
+              item:
+                type: string
+              amount:
+                type: number
+              description:
+                type: string
+        end_date:
+          type: string
+          format: date-time
+        image_url:
+          type: string
+          format: uri
+        video_url:
+          type: string
+          format: uri
+        documents:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              url:
+                type: string
+                format: uri
+              type:
+                type: string
+                enum: [medical_report, invoice, receipt, verification, other]
+    
+    CampaignUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        story:
+          type: string
+        goal_amount:
+          type: number
+        end_date:
+          type: string
+          format: date-time
+        image_url:
+          type: string
+          format: uri
+        video_url:
+          type: string
+          format: uri
+    
+    CampaignDetails:
+      allOf:
+        - $ref: '#/components/schemas/Campaign'
+        - type: object
+          properties:
+            story:
+              type: string
+            scripture_reference:
+              type: string
+            budget_breakdown:
+              type: array
+              items:
+                type: object
+                properties:
+                  item:
+                    type: string
+                  amount:
+                    type: number
+                  description:
+                    type: string
+            recipient:
+              $ref: '#/components/schemas/UserProfile'
+            updates:
+              type: array
+              items:
+                $ref: '#/components/schemas/CampaignUpdate'
+            recent_donations:
+              type: array
+              items:
+                $ref: '#/components/schemas/Donation'
+    
+    CampaignModeration:
+      allOf:
+        - $ref: '#/components/schemas/Campaign'
+        - type: object
+          properties:
+            moderation_status:
+              type: string
+              enum: [pending, approved, rejected, flagged]
+            moderation_score:
+              type: number
+              minimum: 0
+              maximum: 100
+            moderation_flags:
+              type: array
+              items:
+                type: string
+            moderation_notes:
+              type: string
+    
+    Donation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        campaign_id:
+          type: string
+          format: uuid
+        donor_id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+        currency:
+          type: string
+          default: USD
+        is_anonymous:
+          type: boolean
+        message:
+          type: string
+        payment_status:
+          type: string
+          enum: [pending, completed, failed, refunded]
+        payment_method:
+          type: string
+          enum: [card, bank, paypal, crypto]
+        transaction_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    
+    CampaignAnalytics:
+      type: object
+      properties:
+        campaign_id:
+          type: string
+          format: uuid
+        period:
+          type: string
+        metrics:
+          type: object
+          properties:
+            total_raised:
+              type: number
+            total_donors:
+              type: integer
+            average_donation:
+              type: number
+            conversion_rate:
+              type: number
+            page_views:
+              type: integer
+            unique_visitors:
+              type: integer
+            trust_score_trend:
+              type: array
+              items:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date
+                  score:
+                    type: number
+            donation_timeline:
+              type: array
+              items:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date
+                  amount:
+                    type: number
+                  count:
+                    type: integer
+    
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [donation_received, campaign_update, campaign_completed, trust_score_change, system]
+        title:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+        is_read:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+    
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        pages:
+          type: integer
+  
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: UNAUTHORIZED
+            message: Invalid or missing authentication token
+    
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: FORBIDDEN
+            message: You don't have permission to access this resource
+    
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: NOT_FOUND
+            message: Resource not found

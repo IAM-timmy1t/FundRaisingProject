@@ -10,14 +10,20 @@ import { Button } from '@/components/ui/button';
 
 // Import wizard steps
 import BasicInfoStep from './wizard/BasicInfoStep';
+import BasicInfoStepMobile from './wizard/BasicInfoStepMobile';
 import StoryScriptureStep from './wizard/StoryScriptureStep';
+import StoryScriptureStepMobile from './wizard/StoryScriptureStepMobile';
 import BudgetBreakdownStep from './wizard/BudgetBreakdownStep';
+import BudgetBreakdownStepMobile from './wizard/BudgetBreakdownStepMobile';
 import ReviewSubmitStep from './wizard/ReviewSubmitStep';
+import ReviewSubmitStepMobile from './wizard/ReviewSubmitStepMobile';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 const CampaignCreationWizard = () => {
   const navigate = useNavigate();
   const { user, userProfile, checkPermission } = useAuth();
   const { toast } = useToast();
+  const isMobile = useMediaQuery('(max-width: 768px)');
   
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -175,7 +181,7 @@ const CampaignCreationWizard = () => {
   const stepProgress = ((currentStep + 1) / steps.length) * 100;
 
   return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
+    <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6 pb-24 sm:pb-6">
       {/* Header */}
       <div className="text-center space-y-2">
         <h1 className="text-2xl sm:text-3xl font-bold">Create Your Campaign</h1>
@@ -238,41 +244,79 @@ const CampaignCreationWizard = () => {
       {/* Step Content */}
       <div className="min-h-[300px] sm:min-h-[400px]">
         {currentStep === 0 && (
-          <BasicInfoStep
-            data={campaignData}
-            onUpdate={updateCampaignData}
-            onNext={handleNext}
-            categories={categories}
-          />
+          isMobile ? (
+            <BasicInfoStepMobile
+              data={campaignData}
+              onUpdate={updateCampaignData}
+              onNext={handleNext}
+              categories={categories}
+            />
+          ) : (
+            <BasicInfoStep
+              data={campaignData}
+              onUpdate={updateCampaignData}
+              onNext={handleNext}
+              categories={categories}
+            />
+          )
         )}
         
         {currentStep === 1 && (
-          <StoryScriptureStep
-            data={campaignData}
-            onUpdate={updateCampaignData}
-            onNext={handleNext}
-            onBack={handleBack}
-          />
+          isMobile ? (
+            <StoryScriptureStepMobile
+              data={campaignData}
+              onUpdate={updateCampaignData}
+              onNext={handleNext}
+              onBack={handleBack}
+            />
+          ) : (
+            <StoryScriptureStep
+              data={campaignData}
+              onUpdate={updateCampaignData}
+              onNext={handleNext}
+              onBack={handleBack}
+            />
+          )
         )}
         
         {currentStep === 2 && (
-          <BudgetBreakdownStep
-            data={campaignData}
-            onUpdate={updateCampaignData}
-            onNext={handleNext}
-            onBack={handleBack}
-          />
+          isMobile ? (
+            <BudgetBreakdownStepMobile
+              data={campaignData}
+              onUpdate={updateCampaignData}
+              onNext={handleNext}
+              onBack={handleBack}
+            />
+          ) : (
+            <BudgetBreakdownStep
+              data={campaignData}
+              onUpdate={updateCampaignData}
+              onNext={handleNext}
+              onBack={handleBack}
+            />
+          )
         )}
         
         {currentStep === 3 && (
-          <ReviewSubmitStep
-            data={campaignData}
-            onUpdate={updateCampaignData}
-            onBack={handleBack}
-            onSubmit={handleSubmit}
-            isSubmitting={isSubmitting}
-            categories={categories}
-          />
+          isMobile ? (
+            <ReviewSubmitStepMobile
+              data={campaignData}
+              onUpdate={updateCampaignData}
+              onBack={handleBack}
+              onSubmit={handleSubmit}
+              isSubmitting={isSubmitting}
+              categories={categories}
+            />
+          ) : (
+            <ReviewSubmitStep
+              data={campaignData}
+              onUpdate={updateCampaignData}
+              onBack={handleBack}
+              onSubmit={handleSubmit}
+              isSubmitting={isSubmitting}
+              categories={categories}
+            />
+          )
         )}
       </div>
 

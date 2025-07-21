@@ -1,0 +1,16 @@
+{
+  "name": "blessed-horizon-smoke-tests",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node smoke-tests.js",
+    "test:production": "ENVIRONMENT=production node smoke-tests.js",
+    "test:staging": "ENVIRONMENT=staging node smoke-tests.js"
+  },
+  "dependencies": {
+    "playwright": "^1.40.0",
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1"
+  }
+}

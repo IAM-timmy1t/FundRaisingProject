@@ -6,6 +6,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import AuthLayout from './components/layout/AuthLayout';
 import DashboardLayout from './components/layout/DashboardLayout';
 import { notificationService } from './services/notificationService';
+import PerformanceMonitor from './components/PerformanceMonitor';
 
 // Auth pages
 import LoginPage from './components/auth/LoginPage';
@@ -26,8 +27,21 @@ import NotificationsPage from './components/notifications/NotificationsPage';
 import CampaignAnalyticsList from './components/analytics/CampaignAnalyticsList';
 import AnalyticsDashboard from './components/analytics/AnalyticsDashboard';
 
+// Admin pages
+import AdminModerationPage from './pages/admin/AdminModerationPage';
+import PlatformAnalyticsPage from './pages/admin/PlatformAnalyticsPage';
+
+// GDPR components
+import CookieConsentBanner from './components/gdpr/CookieConsentBanner';
+import GDPRPrivacyPolicy from './components/gdpr/GDPRPrivacyPolicy';
+import CookiePolicy from './components/gdpr/CookiePolicy';
+import UserRightsManagement from './components/gdpr/UserRightsManagement';
+
 // Landing page
 import LandingPage from './components/landing/LandingPage';
+
+// Developer Portal
+import DeveloperPortal from './components/views/DeveloperPortal';
 
 function App() {
   useEffect(() => {
@@ -45,9 +59,13 @@ function App() {
   }, []);
   return (
     <EnhancedAuthProvider>
+      <PerformanceMonitor />
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<LandingPage />} />
+        <Route path="/privacy-policy" element={<GDPRPrivacyPolicy />} />
+        <Route path="/cookie-policy" element={<CookiePolicy />} />
+        <Route path="/developers" element={<DeveloperPortal />} />
         
         {/* Auth routes */}
         <Route element={<AuthLayout />}>
@@ -70,8 +88,15 @@ function App() {
           <Route path="/payment/cancel" element={<PaymentCancelPage />} />
           <Route path="/settings/notifications" element={<NotificationPreferences />} />
           <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/account/privacy" element={<UserRightsManagement />} />
+          
+          {/* Admin routes */}
+          <Route path="/admin/moderation" element={<AdminModerationPage />} />
+          <Route path="/admin/analytics" element={<PlatformAnalyticsPage />} />
         </Route>
       </Routes>
+      
+      <CookieConsentBanner />
       
       <Toaster 
         position="top-center"
